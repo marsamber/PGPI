@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height:100vh">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,7 +21,7 @@
     <title>Rent a Tractor</title>
   </head>
   <body className="bg-image" style="background-image: url(../../media/background.png);
-  height: 100vh">
+  height: 100%">
     <nav class="navbar mt-2 mx-2" style="height: 25vh;">
         <div class="w-100">
             <button class="navbar-toggler position-absolute top-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -91,10 +91,10 @@
         </divA>
       </nav>
 
-    <div class="container" style="text-align: justify;
-  text-justify: inter-word;">{% block contenido %} {% endblock %}</div>
+    <div class="container pb-5" style="text-align: justify;
+  text-justify: inter-word; min-height: 60%">{% block contenido %} {% endblock %}</div>
 
-<footer class="bg-dark text-white fixed-bottom">
+<footer class="bg-dark text-white position-relative bottom-0 w-100" >
   <div class="row m-2">
     <div class="col-3">
       <div class="row">
