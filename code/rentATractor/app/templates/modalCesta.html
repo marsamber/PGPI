@@ -1,0 +1,32 @@
+{% block master %} {% endblock %}
+<div class="modal fade" id="cestaModal" tabindex="-1" aria-labelledby="cestaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable me-0 mt-5">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="cestaModalLabel">Cesta (1)</h1>
+        </div>
+        <div class="modal-body">
+          <div class="card mb-3 border-0" style="max-width: 540px;">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="../../media/carretilla2.png" class="img-fluid rounded-start" alt="Carretilla elevadora eléctrica">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <p class="card-text">Carretilla elevadora 1500kg</p>
+                  <strong class="card-text">350€</strong> <br/>
+                  <div class="input-group flex-nowrap">
+                    <input type="number" class="form-control" value="1" min="1" aria-label="Unidades" aria-describedby="addon-wrapping">
+                    <span class="input-group-text" id="addon-wrapping" role="button" onclick="alert('Eliminar producto de la cesta')"><i class="bi bi-trash"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-around">
+          <button type="button" class="btn btn-warning w-50" onclick="location.href='cesta'">Pagar</button>
+        </div>
+      </div>
+    </div>
+  </div>
