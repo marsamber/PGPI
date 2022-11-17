@@ -1,0 +1,76 @@
+{% extends 'master.html' %} {% block contenido %}
+<div class="text-center">
+  <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
+  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
+  <span class="badge text-bg-warning fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
+</div>
+<div class="row mt-5">
+  <div class="col-md-8">
+    <div class="row">
+      <strong style="font-size: xx-large">Confirmación de pedido</strong>
+      <p>Se ha enviado un correo a mail@mail.com con la confirmación del pedido</p>
+    </div>
+    <div class="row">
+      <strong style="font-size: xx-large">Seguimiento de pedido</strong>
+      <div class="card mb-3 border-0" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-6">
+            <img src="../../media/carretilla2.png" class="img-fluid rounded-start" alt="Carretilla elevadora eléctrica">
+          </div>
+          <div class="col-md-6">
+            <div class="card-body">
+              <span class="d-flex"><i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
+              <p class="text-muted ms-4">01/01/2001</p>
+              <span class="d-flex"><i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Enviado</p></span>
+              <p class="text-muted ms-4">--/--/----</p>
+              <span class="d-flex"><i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Recogido</p></span>
+              <p class="text-muted ms-4">--/--/----</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <span>Carretilla elevadora 1500kg</span><br/>
+        <strong>250€</strong>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <strong style="font-size: xx-large">Domicilio de envío</strong>
+      <span>Nombre y apellido</span> <br/>
+      <span>Nombre de la vía y número</span> <br/>
+      <span>Código postal - Población - Provincia</span> <br/>
+      <span>País</span> <br/>
+      <span>Móvil: 000000000</span>
+    </div>
+    <div class="row mt-2">
+      <strong style="font-size: xx-large">Domicilio de facturación</strong>
+      <span>Nombre y apellido</span> <br/>
+      <span>Nombre de la vía y número</span> <br/>
+      <span>Código postal - Población - Provincia</span> <br/>
+      <span>País</span> <br/>
+      <span>Móvil: 000000000</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="row">
+      <span>Fecha de pedido: 01/01/2001</span> <br/>
+      <span>Número de pedido: 1234</span>
+    </div>
+    <div class="row mt-2">
+      <div class="card border-0 bg-light">
+        <div class="card-body">
+          <h3 class="card-title">Resumen del pedido</h3>
+          <p class="card-text d-flex justify-content-between mb-0"><span>Carretilla elevadora 1500kg</span><span>250€</span></p>
+          <p class="card-text fst-italic">1 unidad</p>
+          <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
+          <hr/>
+          <strong class="card-text d-flex justify-content-between"><span>Total</span><span>300€</span></strong>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <a href="#" class="text-black"> Descargar factura PDF</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
