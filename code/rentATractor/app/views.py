@@ -9,6 +9,10 @@ def catalogo(request, categoria):
     print(categoria)
     return render(request, 'catalogo.html', {'categoria': categoria, 'STATIC_URL':settings.STATIC_URL})
 
+def producto(request, nombre):
+    print(nombre)
+    return render(request, 'producto.html', {'nombre': nombre, 'STATIC_URL':settings.STATIC_URL})
+
 def cesta(request):
     return render(request, 'cesta.html')
 
