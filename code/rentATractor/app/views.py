@@ -6,3 +6,6 @@ def index(request):
 
 def miCuenta(request):
     return render(request, 'miCuenta.html')
+
+def favoritos(request):
+    return render(request, 'favoritos.html')
