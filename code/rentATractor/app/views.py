@@ -9,3 +9,6 @@ def miCuenta(request):
 
 def favoritos(request):
     return render(request, 'favoritos.html')
+
+def misCompras(request):
+    return render(request, 'misCompras.html')
