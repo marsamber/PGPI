@@ -1,0 +1,42 @@
+{% extends 'master.html' %} {% block contenido %}
+<div class="row">
+    <div class="col-md-8">
+        <h3>Cesta (1)</h3>
+    </div>
+    <div class="col-md-4">
+        <h3>Resumen del pedido</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3 border-0" style="max-width: 540px;">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="../../media/carretilla2.png" class="img-fluid rounded-start" alt="Carretilla elevadora eléctrica">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <p class="card-text">Carretilla elevadora 1500kg</p>
+                  <span class="d-flex justify-content-between"><strong class="card-text">350€</strong><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark"></i></a></span> <br/>
+                  <div class="input-group flex-nowrap">
+                    <input type="number" class="form-control" value="1" min="1" aria-label="Unidades" aria-describedby="addon-wrapping">
+                    <span class="input-group-text" id="addon-wrapping" role="button" onclick="alert('Eliminar producto de la cesta')"><i class="bi bi-trash"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0" style="width: 18rem;">
+            <div class="card-body ps-0">
+              <p class="card-text d-flex justify-content-between"><span>Subtotal</span><span>350€</span></p>
+              <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
+              <hr/>
+              <strong class="card-text d-flex justify-content-between"><span>Total</span><span>400€</span></strong>
+              <button class="btn btn-warning w-100 mt-2">Pagar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
