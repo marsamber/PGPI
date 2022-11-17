@@ -1,0 +1,107 @@
+{% extends 'master.html' %} {% block contenido %}
+<div class="text-center">
+    <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black" href="/miCuenta"> Mi Perfil</a></span>
+    <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black" href="/favoritos">Favoritos</a></span>
+    <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black" href="/misCompras">Mis Compras</a></span>
+</div>
+<div class="mt-5">
+    <strong style="font-size: xx-large">Datos personales</strong>
+    <div class="row">
+        <div class="col">
+            <span>Nombre</span>
+        </div>
+        <div class="col">
+            <span>Primer apellido</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="text" class="form-control"  aria-label="Nombre">
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" aria-label="PrimerApellido">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>Correo electrónico</span>
+        </div>
+        <div class="col">
+            <span>Contraseña</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="email" class="form-control" aria-label="CorreoElectronico">
+        </div>
+        <div class="col">
+            <input type="password" class="form-control" aria-label="Contraseña">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>Móvil</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" class="form-control" aria-label="Movil">
+        </div>
+    </div>
+</div>
+<br/>
+<div>
+    <strong style="font-size: xx-large">Dirección de envío</strong>
+    <div class="row">
+        <div class="col">
+            <span>País</span>
+        </div>
+        <div class="col">
+            <span>Provincia</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="text" class="form-control"  aria-label="Pais">
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" aria-label="Provincia">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <span>Nombre de la vía</span>
+        </div>
+        <div class="col">
+            <span>Número</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <input type="text" class="form-control" aria-label="NombreVia">
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" aria-label="Numero">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>Código Postal</span>
+        </div>
+        <div class="col">
+            <span>Población</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="text" class="form-control" aria-label="CodigoPostal">
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" aria-label="Poblacion">
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-around mt-5">
+    <button class="btn btn-danger" onclick="alert('Has cerrado sesión')">Cerrar sesión</button>
+</div>
+{% endblock %}

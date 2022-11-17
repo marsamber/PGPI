@@ -1,1 +1,6 @@
 config
+code/rentATractor/app/__pycache__/
+
+code/rentATractor/rentATractor/__pycache__/
+
+code/rentATractor/app/migrations/__pycache__/

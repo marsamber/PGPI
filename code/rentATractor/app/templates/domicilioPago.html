@@ -1,0 +1,101 @@
+{% extends 'master.html' %} {% block contenido %}
+<div class="text-center">
+  <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
+  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
+  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
+</div>
+<div class="row mt-5">
+  <div class="col-md-8">
+    <div class="row">
+      <div class="col">
+        <span>Nombre</span>
+      </div>
+      <div class="col">
+        <span>Primer apellido</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control"  aria-label="Nombre">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" aria-label="PrimerApellido">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <span>País</span>
+      </div>
+      <div class="col">
+        <span>Provincia</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control" aria-label="Pais">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" aria-label="Provincia">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <span>Nombre de la vía</span>
+      </div>
+      <div class="col-md-4">
+        <span>Número</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <input type="text" class="form-control" aria-label="NombreVia">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" aria-label="Numero">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <span>Código postal</span>
+      </div>
+      <div class="col">
+        <span>Población</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control" aria-label="CodigoPostal">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" aria-label="Poblacion">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <span>Móvil</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <input type="text" class="form-control" aria-label="Movil">
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 bg-light">
+      <div class="card-body">
+        <h3 class="card-title">Resumen del pedido</h3>
+        <p class="card-text d-flex justify-content-between mb-0"><span>Carretilla elevadora 1500kg</span><span>250€</span></p>
+        <p class="card-text fst-italic">1 unidad</p>
+        <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
+        <hr/>
+        <strong class="card-text d-flex justify-content-between"><span>Total</span><span>300€</span></strong>
+      </div>
+  </div>
+  </div>
+</div>
+<div class="row mt-5 d-flex justify-content-between">
+  <button class="btn btn-outline-secondary w-25" onclick="location.href='/cesta'">Volver</button>
+  <button class="btn btn-warning w-25" onclick="location.href='/datosPago'">Continuar</button>
+</div>
+{% endblock %}
