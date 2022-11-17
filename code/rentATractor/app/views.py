@@ -6,3 +6,12 @@ def index(request):
 
 def cesta(request):
     return render(request, 'cesta.html')
+
+def miCuenta(request):
+    return render(request, 'miCuenta.html')
+
+def favoritos(request):
+    return render(request, 'favoritos.html')
+
+def misCompras(request):
+    return render(request, 'misCompras.html')

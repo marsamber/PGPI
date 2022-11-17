@@ -24,6 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('cesta/', views.cesta),
+    path('miCuenta/', views.miCuenta),
+    path('favoritos/', views.favoritos),
+    path('misCompras/', views.misCompras),
     path('media/<path>', django.views.static.serve,
          {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
