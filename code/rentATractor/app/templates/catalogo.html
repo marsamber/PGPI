@@ -1,13 +1,11 @@
 {% extends 'master.html' %} {% block contenido %}
 <div class="d-flex justify-content-between">
     <h1>{{categoria}}</h1>
-    <select class="form-select w-25" aria-label="Default select example">
-        <option selected>Ordenar por</option>
-        <option value="1">Nombre ascendente</option>
-        <option value="2">Nombre descendente</option>
-        <option value="3">Precio ascendente</option>
-        <option value="4">Precio descendente</option>
-      </select>
+    <form action="" method="post" class="d-flex">
+        {% csrf_token %}
+        {{formularioOrdenacion}}
+        
+    </form>
 </div>
 <div>
     <div class="row mt-5">

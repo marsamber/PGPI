@@ -43,7 +43,6 @@
                   <a class="nav-link active" aria-current="page" href="/">Inicio</a>
                 </li>
                 <form class="d-flex mx-2" role="search" method="post" action="">
-                    <!-- <input class="form-control me-2" type="search" placeholder="Búsqueda" aria-label="Search"> -->
                     {% csrf_token %}
                     {{formulario}}
                     <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>

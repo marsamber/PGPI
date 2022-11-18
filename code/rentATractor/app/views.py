@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import redirect, render
 
-from app.forms import SearchForm
+from app.forms import OrderForm, SearchForm
 
 # Create your views here.
 def index(request):
@@ -40,24 +40,40 @@ def register(request):
 
 def catalogo(request, categoria):
     search = request.session.get('search')
+    orden = ""
     productos = []
 
-    if search:
-        del request.session['search']
-        # productos = Producto.objects.filter(nombre__icontains=search)
-    else:
-        pass
-        # productos = Producto.objects.filter(categoria=categoria)
-
     formulario = SearchForm()
+    formularioOrdenacion = OrderForm()
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
-            request.session['search'] = formulario.cleaned_data['search']
-            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+        formularioOrdenacion = OrderForm(request.POST)
+        if request.POST.get('search') != None and request.POST.get('search') != "":
+            if formulario.is_valid():
+                request.session['search'] = formulario.cleaned_data['search']
+                return redirect('/catalogo/Resultados de: ' + request.session['search'])
+        if formularioOrdenacion.is_valid():
+            orden = request.POST.get('orden')
+            # if orden == 'name asc':
+            #     productos = productos.order_by('nombre')
+            # elif orden == 'name desc':
+            #     productos = productos.order_by('-nombre')
+            # elif orden == 'price asc':
+            #     productos = productos.order_by('precio')
+            # elif orden == 'price desc':
+            #     productos = productos.order_by('-precio')
+            # elif orden == 'ordenar':
+            #     pass
     
-    return render(request, 'catalogo.html', {'categoria': categoria, 'productos': productos, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    if search and not categoria.startswith('Resultados de: '):
+        del request.session['search']
+        # productos = Producto.objects.filter(categoria=categoria)
+    elif search:
+        pass
+        # productos = Producto.objects.filter(nombre__icontains=search)
+    
+    return render(request, 'catalogo.html', {'categoria': categoria, 'productos': productos, 'formulario': formulario, 'formularioOrdenacion': formularioOrdenacion, 'orden': orden, 'STATIC_URL':settings.STATIC_URL})
 
 def producto(request, nombre):
     formulario = SearchForm()
