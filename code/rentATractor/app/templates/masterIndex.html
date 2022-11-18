@@ -43,12 +43,13 @@
                 <li class="nav-item mx-2">
                   <a class="nav-link active" aria-current="page" href="/">Inicio</a>
                 </li>
-                <form class="d-flex mx-2" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Búsqueda" aria-label="Search">
+                <form class="d-flex mx-2" role="search" action="" method="post">
+                  {% csrf_token %}
+                  {{formulario}}
                     <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
                 </form>
                 <li class="nav-item mx-2">
-                  <a class="nav-link" href="/miCuenta">Mi cuenta</a>
+                  <a class="nav-link" href="/login">Mi cuenta</a>
                 </li>
                 <li class="nav-item mx-2">
                   <button type="button" class="position-relative btn border-0" data-bs-toggle="modal" data-bs-target="#cestaModal">
