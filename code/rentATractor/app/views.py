@@ -130,7 +130,7 @@ def pago(request):
 
     return render(request, 'pago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
-def confirmacion(request):
+def confirmacion(request, pedido):
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -139,7 +139,7 @@ def confirmacion(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'confirmacion.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'confirmacion.html', {'pedido': pedido, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def miCuenta(request):
     formulario = SearchForm()
