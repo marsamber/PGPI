@@ -43,8 +43,9 @@
                 <li class="nav-item mx-2">
                   <a class="nav-link active" aria-current="page" href="/">Inicio</a>
                 </li>
-                <form class="d-flex mx-2" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Búsqueda" aria-label="Search">
+                <form class="d-flex mx-2" role="search" action="" method="post">
+                  {% csrf_token %}
+                  {{formulario}}
                     <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
                 </form>
                 <li class="nav-item mx-2">

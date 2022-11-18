@@ -1,50 +1,136 @@
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from app.forms import SearchForm
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'index.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def catalogo(request, categoria):
-    formulario = SearchForm()
+    search = request.session.get('search')
     productos = []
 
-    # if request.method == 'POST':
-    #     formulario = SearchForm(request.POST)
-    #     if formulario.is_valid():
-    #         busqueda = formulario.cleaned_data['search']
-    #         productos = Producto.objects.filter(nombre__icontains=busqueda)
-    # else:
-    #     productos = Producto.objects.filter(categoria=categoria)
+    if search:
+        del request.session['search']
+        # productos = Producto.objects.filter(nombre__icontains=search)
+    else:
+        pass
+        # productos = Producto.objects.filter(categoria=categoria)
+
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
     
-    return render(request, 'catalogo.html', {'categoria': categoria, 'formulario': formulario, 'productos': productos, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'catalogo.html', {'categoria': categoria, 'productos': productos, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def producto(request, nombre):
-    print(nombre)
-    return render(request, 'producto.html', {'nombre': nombre, 'STATIC_URL':settings.STATIC_URL})
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'producto.html', {'nombre': nombre, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def cesta(request):
-    return render(request, 'cesta.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'cesta.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def domicilioPago(request):
-    return render(request, 'domicilioPago.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'domicilioPago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def datosPago(request):
-    return render(request, 'datosPago.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'datosPago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def pago(request):
-    return render(request, 'pago.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'pago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def confirmacion(request):
-    return render(request, 'confirmacion.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'confirmacion.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def miCuenta(request):
-    return render(request, 'miCuenta.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'miCuenta.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def favoritos(request):
-    return render(request, 'favoritos.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'favoritos.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def misCompras(request):
-    return render(request, 'misCompras.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+            
+    return render(request, 'misCompras.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})

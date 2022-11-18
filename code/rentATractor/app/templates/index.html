@@ -2,9 +2,8 @@
 <strong style="font-size:3vw">Alquiler</strong>
 <p style="font-size:3vw">de maquinaria de construcción</p>
 <form class="d-flex" role="search" action="" method="post">
-    <fieldset>
-        {{formulario.as_p}}
-    </fieldset>
+    {% csrf_token %}
+    {{formulario}}
     <!-- <input class="form-control me-2" type="search" placeholder="Nombre del producto, categoría, fabricante, ..." aria-label="Search" id="search" name="search" required> -->
     <button class="btn btn-warning" type="submit"><span class="d-flex">BUSCAR&nbsp;<i class="bi bi-search"></i></span></button>
 </form>
