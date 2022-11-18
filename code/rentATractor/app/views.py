@@ -16,13 +16,27 @@ def index(request):
     return render(request, 'index.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def login(request):
-    return render(request, 'login.html')
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'login.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 
 def register(request):
-    return render(request, 'register.html')
+    formulario = SearchForm()
 
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
+    return render(request, 'register.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def catalogo(request, categoria):
     search = request.session.get('search')
