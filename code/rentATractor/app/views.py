@@ -173,3 +173,92 @@ def misCompras(request):
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
             
     return render(request, 'misCompras.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def sobreNosotros(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'sobreNosotros.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def contacto(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'contacto.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def atencionCliente(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'atencionCliente.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def seguimientoPedidos(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'seguimientoPedidos.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def politicaDevolucion(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'politicaDevolucion.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def reclamaciones(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'reclamaciones.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def terminosCondicionesUso(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'terminosCondicionesUso.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def politicaPrivacidad(request):
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'politicaPrivacidad.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+   
