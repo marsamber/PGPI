@@ -1,0 +1,30 @@
+{% extends 'master.html' %} {% block contenido %}
+<div class="text-center">
+  <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
+  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
+  <span class="badge text-bg-warning fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
+</div>
+<div class="row mt-5">
+  <div class="col-md-8 text-center">
+    <strong class="text-start" style="font-size: xx-large">Pago</strong><br/>
+    <button class="btn btn-warning w-50 mt-2">Paypal</button><br/>
+    <button class="btn btn-dark w-50 mt-2">Tarjeta de débito o crédito</button>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 bg-light">
+      <div class="card-body">
+        <h3 class="card-title">Resumen del pedido</h3>
+        <p class="card-text d-flex justify-content-between mb-0"><span>Carretilla elevadora 1500kg</span><span>250€</span></p>
+        <p class="card-text fst-italic">1 unidad</p>
+        <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
+        <hr/>
+        <strong class="card-text d-flex justify-content-between"><span>Total</span><span>300€</span></strong>
+      </div>
+  </div>
+  </div>
+</div>
+<div class="row mt-5 d-flex justify-content-between">
+  <button class="btn btn-outline-secondary w-25" onclick="location.href='/datosPago'">Volver</button>
+  <button class="btn btn-warning w-25" onclick="location.href='/confirmacion/1234'">Confirmar compra</button>
+</div>
+{% endblock %}

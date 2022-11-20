@@ -1,8 +1,9 @@
 {% extends 'masterIndex.html' %} {% block contenido %}
 <strong style="font-size:3vw">Alquiler</strong>
 <p style="font-size:3vw">de maquinaria de construcción</p>
-<form class="d-flex" role="search">
-    <input class="form-control me-2" type="search" placeholder="Nombre del producto, categoría, fabricante, ..." aria-label="Search">
+<form class="d-flex" role="search" action="" method="post">
+    {% csrf_token %}
+    {{formulario}}
     <button class="btn btn-warning" type="submit"><span class="d-flex">BUSCAR&nbsp;<i class="bi bi-search"></i></span></button>
 </form>
 <div class="bg-white mt-5">
@@ -11,35 +12,35 @@
     </div>
     <div class="row mt-3">
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Manipulación de cargas">
                 <img src="../../media/manipulacionCargas.png" alt="Manipulación de cargas" width="100px" height="100px">
                 <br/>
                 Manipulación de cargas
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Movimiento de tierras">
                 <img src="../../media/movimientoTierras.png" alt="Movimiento de tierras" width="100px" height="100px">
                 <br/>
                 Movimiento de tierras
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Excavadoras">
                 <img src="../../media/excavadoras.png" alt="Excavadoras" width="100px" height="100px">
                 <br/>
                 Excavadoras
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Plataformas elevadoras">
                 <img src="../../media/plataformasElevadoras.png" alt="Plataformas elevadoras" width="100px" height="100px">
                 <br/>
                 Plataformas elevadoras
             </a>
             </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Andamios de aluminio">
                 <img src="../../media/andamiosAluminio.png" alt="Andamios de aluminio" width="100px" height="100px">
                 <br/>
                 Andamios de aluminio
@@ -48,35 +49,35 @@
     </div>
     <div class="row mt-3 pb-3">
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Grúas">
                 <img src="../../media/gruas.png" alt="Grúas" width="100px" height="100px">
                 <br/>
                 Grúas
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Maquinaria de hormigón">
                 <img src="../../media/maquinariaHormigon.png" alt="Maquinaria de hormigón" width="100px" height="100px">
                 <br/>
                 Maquinaria de hormigón
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Herramientas de mano">
                 <img src="../../media/herramientasMano.png" alt="Herramientas de mano" width="100px" height="100px">
                 <br/>
                 Herramientas de mano
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Apisonadoras">
                 <img src="../../media/apisonadoras.png" alt="Apisonadoras" width="100px" height="100px">
                 <br/>
                 Apisonadoras
             </a>
         </div>
         <div class="col text-center">
-            <a class="text-decoration-none text-black" href="#">
+            <a class="text-decoration-none text-black" href="/catalogo/Varios">
                 <img src="../../media/varios.png" alt="Varios" width="100px" height="100px">
                 <br/>
                 Varios

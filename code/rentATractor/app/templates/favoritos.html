@@ -1,0 +1,21 @@
+{% extends 'master.html' %} {% block contenido %}
+<div class="text-center">
+    <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black" href="/miCuenta"> Mi Perfil</a></span>
+    <span class="badge text-bg-warning fs-5"><a class = "text-decoration-none text-black" href="/favoritos">Favoritos</a></span>
+    <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black" href="/misCompras">Mis Compras</a></span>
+</div>
+<div class="mt-5">
+    <div class="row mb-5">
+        <div class="col-md-3 offset-md-1">
+            <div class="card border-0">
+                <img src="../../media/carretilla1.png" class="card-img-top" alt="Carretilla elevadora eléctrica">
+                <div class="card-body">
+                    <p class="card-text">Carretilla elevadora eléctrica 1500kg</p>
+                    <h5 class="card-title d-flex justify-content-between"><span>350€</span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
+                    <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
+                  </div>
+              </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
