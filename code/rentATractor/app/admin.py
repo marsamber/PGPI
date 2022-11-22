@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Maquina, Cliente, Pedido, Tarjeta, ClienteRegistrado, Opinion, Reclamacion, Descuento, Contiene
+from app.models import Maquina, Cliente, Pedido, Tarjeta, ClienteRegistrado, Opinion, Reclamacion, Descuento, Contiene, EnCesta
 
 admin.site.register(Maquina)
 admin.site.register(Cliente)
@@ -10,3 +10,4 @@ admin.site.register(Opinion)
 admin.site.register(Reclamacion)
 admin.site.register(Descuento)
 admin.site.register(Contiene)
+admin.site.register(EnCesta)

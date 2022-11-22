@@ -85,11 +85,12 @@ class Descuento(models.Model):
     fecha_validez = models.DateField()
     maquina = models.ManyToManyField('Maquina')
 
-class Contiene (models.Model):
+class Contiene(models.Model):
     cantidad = models.IntegerField()
     pedido = models.ManyToManyField('Pedido')
     maquina = models.ManyToManyField('Maquina')
 
-
-
-
+class EnCesta(models.Model):
+    maquina = models.ForeignKey("Maquina", on_delete=models.CASCADE)
+    cliente = models.ForeignKey("Cliente", on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
