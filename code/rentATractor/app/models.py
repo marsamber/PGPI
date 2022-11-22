@@ -87,8 +87,8 @@ class Descuento(models.Model):
 
 class Contiene(models.Model):
     cantidad = models.IntegerField()
-    pedido = models.ManyToManyField('Pedido')
-    maquina = models.ManyToManyField('Maquina')
+    pedido = models.ForeignKey('Pedido',on_delete=models.CASCADE)
+    maquina = models.ForeignKey('Maquina',on_delete=models.CASCADE)
 
 class EnCesta(models.Model):
     maquina = models.ForeignKey("Maquina", on_delete=models.CASCADE)
