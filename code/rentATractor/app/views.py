@@ -1,9 +1,11 @@
+from pyexpat import model
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 
-from app.forms import OrderForm, SearchForm, ContactForm
+from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm
+from .models import Maquina, Pedido, Reclamacion
 
 # Create your views here.
 def index(request):
@@ -253,15 +255,35 @@ def politicaDevolucion(request):
     return render(request, 'politicaDevolucion.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def reclamaciones(request):
+    form=ComplaintForm()
     formulario = SearchForm()
+    submitted = False
 
     if request.method == 'POST':
+        form = ComplaintForm(request.POST)
+        if form.is_valid():
+            reclamacion = Reclamacion()
+            reclamacion.cuerpo = form.cleaned_data['message']
+            idPedido = form.cleaned_data['order']
+            reclamacion.pedido = Pedido.objects.get(id=idPedido)
+            idMaquina = form.cleaned_data['machine']
+            reclamacion.maquina = Maquina.objects.get(id=idMaquina)
+            reclamacion.save()
+            request.session['name'] = form.cleaned_data['name']
+            request.session['email'] = form.cleaned_data['email']
+        
+            return redirect('/reclamaciones?submitted=True')
+
         formulario = SearchForm(request.POST)
         if formulario.is_valid():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'reclamaciones.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    else:
+        if 'submitted' in request.GET:
+            submitted = True
+
+    return render(request, 'reclamaciones.html', {'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL, 'submitted': submitted})
 
 def terminosCondicionesUso(request):
     formulario = SearchForm()
