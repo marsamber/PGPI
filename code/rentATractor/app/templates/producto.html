@@ -1,5 +1,5 @@
 {% extends 'master.html' %} {% block contenido %}
-<div class="row mt-5 justify-content-center">
+<div class="row justify-content-center">
     <div class="col-md-6">
         <img src="../../media/{{producto.imagen}}" class="img-fluid" alt={{nombre}}>
     </div>
@@ -38,7 +38,9 @@
     {% for sugerencia in sugerencias %}
     <div class="col-md-3 offset-md-1">
         <div class="card border-0">
-            <img src="../../media/{{sugerencia.imagen}}" role="button" class="card-img-top" alt="{{sugerencia.nombre}}" onclick="location.href='/producto/{{sugerencia.id}}'">
+            <div class="square">
+                <img src="../../media/{{sugerencia.imagen}}" role="button" class="card-img-top" alt="{{sugerencia.nombre}}" onclick="location.href='/producto/{{sugerencia.id}}'">
+            </div>
             <div class="card-body">
                 <p class="card-text">{{sugerencia.nombre}}</p>
                 <h5 class="card-title">{{sugerencia.precio}}€</h5>

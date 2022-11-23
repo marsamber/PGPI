@@ -11,7 +11,9 @@
         {% for producto in productos %}
         <div class="col-md-3 offset-md-1">
             <div class="card border-0">
-                <img src= "../../media/{{producto.imagen}}" class="card-img-top img-fluid" role="button" alt="{{producto.nombre}}" style="opacity: 1;" onclick="location.href='/producto/{{producto.id}}'">
+                <div class="square">                
+                    <img src= "../../media/{{producto.imagen}}" class="card-img-top img-fluid" role="button" alt="{{producto.nombre}}" style="opacity: 1;" onclick="location.href='/producto/{{producto.id}}'">
+                </div>
                 <div class="card-body">
                   <p class="card-text">{{producto.nombre}}</p>
                   <h5 class="card-title d-flex justify-content-between"><span>{{producto.precio}}€ <span class="text-danger"> </span> <span class="text-muted text-decoration-line-through"></span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
