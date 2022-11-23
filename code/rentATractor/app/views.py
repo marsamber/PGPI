@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 
 from app.forms import OrderForm, SearchForm
+from app.models import Maquina
 
 # Create your views here.
 def index(request):
@@ -42,6 +43,7 @@ def catalogo(request, categoria):
     search = request.session.get('search')
     orden = ""
     productos = []
+    tipoMaquina = categoriaToTipoMaquina(categoria)
 
     formulario = SearchForm()
     formularioOrdenacion = OrderForm()
@@ -54,28 +56,52 @@ def catalogo(request, categoria):
                 request.session['search'] = formulario.cleaned_data['search']
                 return redirect('/catalogo/Resultados de: ' + request.session['search'])
         if formularioOrdenacion.is_valid():
-            orden = request.POST.get('orden')
-            # if orden == 'name asc':
-            #     productos = productos.order_by('nombre')
-            # elif orden == 'name desc':
-            #     productos = productos.order_by('-nombre')
-            # elif orden == 'price asc':
-            #     productos = productos.order_by('precio')
-            # elif orden == 'price desc':
-            #     productos = productos.order_by('-precio')
-            # elif orden == 'ordenar':
-            #     pass
+            orden = request.POST.get('order')
+            print(orden)
+            if orden == 'name asc':
+                if search:
+                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('nombre')
+                else: 
+                    productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('nombre')
+                print(productos)
+            elif orden == 'name desc':
+                if search:
+                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('-nombre')
+                else: 
+                    productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-nombre')
+                print(productos)
+            elif orden == 'price asc':
+                if search:
+                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('precio')
+                else: 
+                    productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('precio')
+                print(productos)
+            elif orden == 'price desc':
+                if search:
+                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('-precio')
+                else: 
+                    productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-precio')
+                print(productos)
+            elif orden == 'ordenar':
+                if search:
+                    productos = Maquina.objects.filter(nombre__icontains=search)
+                else: 
+                    productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
     
-    if search and not categoria.startswith('Resultados de: '):
+    if search and not categoria.startswith('Resultados de: ') and orden == "":
         del request.session['search']
-        # productos = Producto.objects.filter(categoria=categoria)
-    elif search:
-        pass
-        # productos = Producto.objects.filter(nombre__icontains=search)
+        productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
+    elif not search and orden == "":
+        productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
+    elif search and orden == "":
+        productos = Maquina.objects.filter(nombre__icontains=search)
     
     return render(request, 'catalogo.html', {'categoria': categoria, 'productos': productos, 'formulario': formulario, 'formularioOrdenacion': formularioOrdenacion, 'orden': orden, 'STATIC_URL':settings.STATIC_URL})
 
-def producto(request, nombre):
+def producto(request, id):
+    producto = Maquina.objects.get(id=id)
+    sugerencias = Maquina.objects.filter(tipo_maquina__icontains=producto.tipo_maquina).exclude(id=id).order_by('?')[:3]
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -84,7 +110,7 @@ def producto(request, nombre):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'producto.html', {'nombre': nombre, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'producto.html', {'producto': producto, 'sugerencias': sugerencias, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def cesta(request):
     formulario = SearchForm()
@@ -262,3 +288,27 @@ def politicaPrivacidad(request):
 
     return render(request, 'politicaPrivacidad.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
    
+def categoriaToTipoMaquina(categoria):
+    match categoria:
+        case 'Manipulación de cargas':
+            return 'manipulacion'
+        case 'Movimiento de tierras':
+            return 'movimiento'
+        case 'Excavadoras':
+            return 'excavadoras'
+        case 'Plataformas elevadoras':
+            return 'plataformas'
+        case 'Andamios de aluminio':
+            return 'andamios'
+        case 'Grúas':	
+            return 'gruas'
+        case 'Maquinaria de hormigón':
+            return 'hormigon'
+        case 'Herramientas de mano':
+            return 'mano'
+        case 'Apisonadoras':
+            return 'apisonadoras'
+        case 'Varios':
+            return 'varios'
+        case _:
+            return 'error'
