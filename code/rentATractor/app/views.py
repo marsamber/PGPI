@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.shortcuts import redirect, render
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse, HttpResponseRedirect
 
-from app.forms import OrderForm, SearchForm
+from app.forms import OrderForm, SearchForm, ContactForm
 
 # Create your views here.
 def index(request):
@@ -187,14 +189,35 @@ def sobreNosotros(request):
 
 def contacto(request):
     formulario = SearchForm()
-
+    form = ContactForm()
+    submitted = False
     if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = "Website Inquiry"
+            body = {
+                'email': form.cleaned_data['email'],
+                'subject': form.cleaned_data['subject'],
+                'message': form.cleaned_data['message'],
+            }
+            message = "\n".join(body.values())
+
+            try:
+                send_mail(subject, message, body.get(0), ['iredomgar4@alum.us.es'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect('/contacto?submitted=True')
+        
         formulario = SearchForm(request.POST)
         if formulario.is_valid():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    
+    else:
+        if 'submitted' in request.GET:
+            submitted = True
 
-    return render(request, 'contacto.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'contacto.html', {'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL, 'submitted': submitted})
 
 def atencionCliente(request):
     formulario = SearchForm()
