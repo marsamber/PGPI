@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 
 from app.forms import OrderForm, SearchForm
-from app.models import Maquina
+from app.models import  Maquina
 
 # Create your views here.
 def index(request):

@@ -1,4 +1,6 @@
 {% extends 'master.html' %} {% block contenido %}
+{% load custom_template_tags %}
+
 <div class="d-flex justify-content-between">
     <h1>{{categoria}}</h1>
     <form action="" method="post" class="d-flex">
@@ -12,11 +14,35 @@
         <div class="col-md-3 offset-md-1">
             <div class="card border-0">
                 <div class="square">                
-                    <img src= "../../media/{{producto.imagen}}" class="card-img-top img-fluid" role="button" alt="{{producto.nombre}}" style="opacity: 1;" onclick="location.href='/producto/{{producto.id}}'">
+                    <img src= "../../media/{{producto.imagen}}" 
+                    {% if producto.stock != 0 %}
+                        class="card-img-top img-fluid"
+                    {% else %}
+                        class="card-img-top img-fluid out-stock"
+                    {% endif %}
+                    role="button" alt="{{producto.nombre}}" onclick="location.href='/producto/{{producto.id}}'">
                 </div>
                 <div class="card-body">
-                  <p class="card-text">{{producto.nombre}}</p>
-                  <h5 class="card-title d-flex justify-content-between"><span>{{producto.precio}}€ <span class="text-danger"> </span> <span class="text-muted text-decoration-line-through"></span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
+                    {{producto.stock}}
+                    <p class="card-text">{{producto.nombre}}</p>
+                    <h5 class="card-title d-flex justify-content-between">
+                        <span>
+                            {% if producto.stock != 0 %}
+                                {{producto.precio|subtract:producto.descuento}}€
+                            {% endif %} 
+                            <span class="text-danger">
+                                {% if producto.stock == 0 %}
+                                    AGOTADO
+                                {% endif %} 
+                            </span>
+                            <span class="text-muted text-decoration-line-through">
+                                {% if producto.descuento != 0 %}
+                                    {{producto.precio}}€
+                                {% endif %}
+                            </span>
+                        </span>
+                        <a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a>
+                    </h5>
                   <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
                 </div>
               </div>

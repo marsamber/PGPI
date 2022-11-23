@@ -88,15 +88,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Descuento',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('descuento', models.FloatField()),
-                ('fecha_validez', models.DateField()),
-                ('maquina', models.ManyToManyField(to='app.maquina')),
-            ],
-        ),
-        migrations.CreateModel(
             name='Contiene',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

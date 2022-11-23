@@ -38,7 +38,7 @@ class Maquina(models.Model):
     dimensiones = models.CharField(max_length=256)
     imagen = models.CharField(max_length=256)
     tipo_maquina = models.CharField(choices=TipoMaquina.choices(), default=TipoMaquina.varios, max_length=256)
-
+    
 class Cliente(models.Model):
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=64)
@@ -79,11 +79,6 @@ class Reclamacion(models.Model):
     cuerpo = models.CharField(max_length=256)
     pedido = models.ForeignKey('Pedido',on_delete=models.CASCADE)
     maquina = models.ForeignKey('Maquina',on_delete=models.CASCADE)
-
-class Descuento(models.Model):
-    descuento = models.FloatField()
-    fecha_validez = models.DateField()
-    maquina = models.ManyToManyField('Maquina')
 
 class Contiene(models.Model):
     cantidad = models.IntegerField()
