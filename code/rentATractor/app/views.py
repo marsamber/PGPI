@@ -1,11 +1,19 @@
+from argparse import _get_action_name
+from distutils.command import clean
 from pyexpat import model
+from pyexpat.errors import messages
+import socket
+from django import forms
 from django.conf import settings
+from django.forms import ValidationError
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
-from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm
-from .models import Maquina, Pedido, Reclamacion
+from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm
+from .models import Maquina, Opinion, Pedido, Reclamacion
 
 # Create your views here.
 def index(request):
@@ -103,8 +111,11 @@ def cesta(request):
 
 def domicilioPago(request):
     formulario = SearchForm()
+    form = Step1Form()
 
     if request.method == 'POST':
+        form = Step1Form(request.POST)
+
         formulario = SearchForm(request.POST)
         if formulario.is_valid():
             request.session['search'] = formulario.cleaned_data['search']
@@ -114,6 +125,7 @@ def domicilioPago(request):
 
 def datosPago(request):
     formulario = SearchForm()
+    form = Step1Form()
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
@@ -121,7 +133,7 @@ def datosPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'datosPago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'datosPago.html', {'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL})
 
 def pago(request):
     formulario = SearchForm()
@@ -284,6 +296,42 @@ def reclamaciones(request):
             submitted = True
 
     return render(request, 'reclamaciones.html', {'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL, 'submitted': submitted})
+
+
+def opinion(request, pedido):
+    form = OpinionForm()
+    formulario = SearchForm()
+    submitted = False
+ 
+
+    if request.method == 'POST':
+        form = OpinionForm(request.POST)
+        if form.is_valid():
+            opinion = Opinion()
+            idPedido = pedido
+            print(pedido)
+            opinion.pedido = Pedido.objects.get(id=idPedido)
+            idMaquina = form.cleaned_data['machine']
+            if Pedido.objects.filter(maquina=Maquina.objects.get(id=idMaquina)).exists():
+                opinion.maquina = Maquina.objects.get(id=idMaquina)
+                opinion.cuerpo = form.cleaned_data['message']
+                opinion.save()
+                return redirect('/opinion/' + str(pedido) + '?submitted=True')
+            else:
+                form._errors['machine'] = form.add_error('machine', '')
+             
+
+        # formulario = SearchForm(request.POST)
+        # if formulario.is_valid():
+        #     request.session['search'] = formulario.cleaned_data['search']
+        #     return redirect('/catalogo/Resultados de: ' + request.session['search'])
+        
+    else:
+        if 'submitted' in request.GET:
+            submitted = True
+
+    return render(request, 'opinion.html', {'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'submitted': submitted})
+
 
 def terminosCondicionesUso(request):
     formulario = SearchForm()

@@ -41,6 +41,7 @@ urlpatterns = [
     path('seguimientoPedidos/', views.seguimientoPedidos),
     path('politicaDevolucion/', views.politicaDevolucion),
     path('reclamaciones/', views.reclamaciones),
+    path('opinion/<int:pedido>', views.opinion),  # CAMBIAR URL
     path('terminosCondicionesUso/', views.terminosCondicionesUso),
     path('politicaPrivacidad/', views.politicaPrivacidad),
     path('media/<path>', django.views.static.serve,

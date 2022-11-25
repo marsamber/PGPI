@@ -1,5 +1,7 @@
 from django import forms
 
+from .models import Maquina, Pedido
+
 
 class SearchForm(forms.Form):
     search = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Nombre del producto, categoría, fabricante, ..."}), label=False, required=False)
@@ -29,3 +31,31 @@ class ComplaintForm(forms.Form):
         attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de máquina", required=True)
     message = forms.CharField(widget=forms.Textarea(
         attrs={"class": "form-control me-2", "placeholder": "Descripción del problema"}), label="Mensaje", required=True)
+
+class OpinionForm(forms.Form):
+    machine = forms.IntegerField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de máquina", required=True)
+    message = forms.CharField(widget=forms.Textarea(
+        attrs={"class": "form-control me-2", "placeholder": "Escribe tu opinión"}), label="Mensaje", required=True)
+
+    
+
+class Step1Form(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2 ", "placeholder": "Nombre"}), label="Nombre", required=True)
+    surname = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2 ", "placeholder": "Apellidos"}), label="Apellidos", required=True)
+    address = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección", required=True)
+    number = forms.IntegerField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "XXX"}), label="Número", required=True)
+    cp = forms.IntegerField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "XXXXX"}), label="Código Postal", required=True)
+    city = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la población"}), label="Población", required=True)
+    province = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la provincia"}), label="Provincia", required=True)
+    country = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Nombre del país"}), label="País", required=True)
+    phone = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="País", required=True)
