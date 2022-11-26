@@ -114,8 +114,9 @@
     <input type="text" class="form-control" aria-label="Movil">
   </div>
 </div>
-<div class="row mt-5 d-flex justify-content-between">
-  <button class="btn btn-outline-secondary w-25" onclick="location.href='/domicilioPago'">Volver</button>
-  <button class="btn btn-warning w-25" onclick="location.href='/pago'">Continuar</button>
-</div>
+<form class="row mt-5 d-flex justify-content-between" action="/pago/" method="POST"> {% csrf_token %}
+    <button class="btn btn-outline-secondary w-25" onclick="location.href='/domicilioPago'">Volver</button>
+    <button class="btn btn-warning w-25" type="submit">Confirmar</button>
+</form>
+
 {% endblock %}
