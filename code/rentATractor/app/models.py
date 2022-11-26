@@ -19,6 +19,7 @@ class TipoMaquina(Enum):
         return [(key.value, key.name)for key in cls]
 
 class EstadoPedido(Enum):
+    no_pagado = 'No pagado'
     comprado = 'Comprado'
     enviado = 'Enviado'
     recogido = 'Recogido'
@@ -38,6 +39,7 @@ class Maquina(models.Model):
     dimensiones = models.CharField(max_length=256)
     imagen = models.CharField(max_length=256)
     tipo_maquina = models.CharField(choices=TipoMaquina.choices(), default=TipoMaquina.varios, max_length=256)
+    descuento = models.FloatField(default=0.0)
     
 class Cliente(models.Model):
     id = models.IntegerField(primary_key=True)
