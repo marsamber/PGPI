@@ -1,14 +1,28 @@
 {% extends 'master.html' %} {% block contenido %}
-<div class="row mt-5 justify-content-center">
+{% load custom_template_tags %}
+
+<div class="row justify-content-center">
     <div class="col-md-6">
-        <img src="../../media/carretilla2.png" class="img-fluid" alt={{nombre}}>
+        <img src="../../media/{{producto.imagen}}" class="img-fluid" alt={{nombre}}>
     </div>
     <div class="col-md-4 my-auto">
-        <h5>{{nombre}}</h5>
-        <p>La carretilla elevadora nos van a permitir: descargar, desplazar, trasladar y apilar todo de tipo de cargas
-            en todo tipo de superficies. Además, son máquinas increíblemente resistentes que les confieren una vida útil
-            fuera de lo común. La carga de trabajo es de hasta 1500kg.</p>
-        <h4>250€</h4>
+        <h5>{{producto.nombre}}</h5>
+        <p>{{producto.descripcion}}</p>
+        <h4><span>
+            {% if producto.stock != 0 %}
+                {{producto.precio|subtract:producto.descuento}}€
+            {% endif %} 
+            <span class="text-danger">
+                {% if producto.stock == 0 %}
+                    AGOTADO
+                {% endif %} 
+            </span>
+            <span class="text-muted text-decoration-line-through">
+                {% if producto.descuento != 0 %}
+                    {{producto.precio}}€
+                {% endif %}
+            </span>
+        </span></h4>
         <button class="btn btn-warning w-100" onclick="alert('Producto añadido al carrito')">Añadir al carrito</button>
         <p class="mt-3 mb-0"><i class="bi bi-box"></i> <span class="text-decoration-underline">Envío a domicilio</span></p>
         <p class="text-muted">Envío GRATIS a España por compra superior a 499€</p>
@@ -18,54 +32,51 @@
 </div>
 <div class="row mt-5">
     <div class="col-md">
-        <strong style="font-size: xx-large">Detalles del producto</strong><br />
-        <span>Marca: HYSTER </span><br />
-        <span>Modelo: S1</span> <br />
-        <span>Categoría: Carretilla elevadora</span> <br />
-        <span>Año fabricación: 04/2018</span> <br />
-        <span>Capacidad de varga: 1500 kg</span> <br />
-        <span>Combustible: Diesel</span>
+        <strong class="fs-xx-large">Detalles del producto</strong><br />
+        <span><strong>Marca</strong>: {{producto.marca}} </span><br />
+        <span><strong>Fabricante</strong>: {{producto.fabricante}}</span> <br />
+        <span><strong>Dimensiones</strong>: {{producto.dimensiones}}</span> <br />
     </div>
 </div>
 <div class="row mt-5">
     <div class="col-md">
-        <strong style="font-size: xx-large">Opiniones</strong><br />
+        <strong class="fs-xx-large">Opiniones</strong><br />
         <dl>
-            <dt>Usuario 1 - ¡Excelente!</dt>
-            <dd class="ms-3">Excelente producto, muy recomendable.</dd>
-            <dt>Usuario 2 - Todo perfecto</dt>
-            <dd class="ms-3">El producto llegó en perfecto estado.</dd>
+            {% for opinion in opiniones %}
+            <dt>{{opinion.pedido.cliente.nombre}}</dt>
+            <dd class="ms-3">{{opinion.cuerpo}}</dd>
+            {% endfor %}
         </dl>
     </div>
 </div>
 <div class="row mt-5">
-    <strong style="font-size: xx-large;">Sugerencias</strong>
+    <strong class="fs-xx-large">Sugerencias</strong>
+    {% for sugerencia in sugerencias %}
     <div class="col-md-3 offset-md-1">
         <div class="card border-0">
-            <img src="../../media/carretilla1.png" role="button" class="card-img-top" alt="Carretilla elevadora eléctrica 1500kg" onclick="location.href='/producto/Carretilla elevadora eléctrica 1500kg'">
+            <div class="square">
+                <img src="../../media/{{sugerencia.imagen}}" role="button" class="card-img-top" alt="{{sugerencia.nombre}}" onclick="location.href='/producto/{{sugerencia.id}}'">
+            </div>
             <div class="card-body">
-                <p class="card-text">Carretilla elevadora eléctrica 1500kg</p>
-                <h5 class="card-title">350€</h5>
+                <p class="card-text">{{sugerencia.nombre}}</p>
+                <h5 class="card-title"><span>
+                    {% if sugerencia.stock != 0 %}
+                        {{sugerencia.precio|subtract:sugerencia.descuento}}€
+                    {% endif %} 
+                    <span class="text-danger">
+                        {% if sugerencia.stock == 0 %}
+                            AGOTADO
+                        {% endif %} 
+                    </span>
+                    <span class="text-muted text-decoration-line-through">
+                        {% if sugerencia.descuento != 0 %}
+                            {{sugerencia.precio}}€
+                        {% endif %}
+                    </span>
+                </span></h5>
             </div>
           </div>
     </div>
-    <div class="col-md-3 offset-md-1">
-        <div class="card border-0">
-            <img src="../../media/carretilla4.png" role="button" class="card-img-top" alt="Carretilla elevadora 2500kg" onclick="location.href='/producto/Carretilla elevadora 2500kg'">
-            <div class="card-body">
-                <p class="card-text">Carretilla elevadora 2500kg</p>
-                <h5 class="card-title">390€</h5>
-            </div>
-          </div>
-    </div>
-    <div class="col-md-3 offset-md-1">
-        <div class="card border-0">
-            <img src="../../media/carretilla5.png" role="button" class="card-img-top" alt="Carretilla elevadora apiladora" onclick="location.href='/producto/Carretilla elevadora apiladora'">
-            <div class="card-body">
-                <p class="card-text">Carretilla elevadora apiladora</p>
-                <h5 class="card-title">110€</h5>
-            </div>
-          </div>
-    </div>
+    {% endfor %}
 </div>
 {% endblock %}
