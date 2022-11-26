@@ -21,9 +21,11 @@
                         class="card-img-top img-fluid out-stock"
                     {% endif %}
                     role="button" alt="{{producto.nombre}}" onclick="location.href='/producto/{{producto.id}}'">
+                    {% if producto.descuento != 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">%</span>
+                    {% endif %}
                 </div>
                 <div class="card-body">
-                    {{producto.stock}}
                     <p class="card-text">{{producto.nombre}}</p>
                     <h5 class="card-title d-flex justify-content-between">
                         <span>
@@ -41,7 +43,13 @@
                                 {% endif %}
                             </span>
                         </span>
-                        <a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a>
+                        <a role="button" onclick="alert('Añadido a favoritos')">
+                            {% if producto in favoritos %}
+                            <i class="bi bi-bookmark-fill"></i>
+                            {% else %}
+                            <i class="bi bi-bookmark"></i>
+                            {% endif %}
+                        </a>
                     </h5>
                   <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
                 </div>

@@ -1,4 +1,6 @@
 {% extends 'master.html' %} {% block contenido %}
+{% load custom_template_tags %}
+
 <div class="row justify-content-center">
     <div class="col-md-6">
         <img src="../../media/{{producto.imagen}}" class="img-fluid" alt={{nombre}}>
@@ -6,7 +8,21 @@
     <div class="col-md-4 my-auto">
         <h5>{{producto.nombre}}</h5>
         <p>{{producto.descripcion}}</p>
-        <h4>{{producto.precio}}€</h4>
+        <h4><span>
+            {% if producto.stock != 0 %}
+                {{producto.precio|subtract:producto.descuento}}€
+            {% endif %} 
+            <span class="text-danger">
+                {% if producto.stock == 0 %}
+                    AGOTADO
+                {% endif %} 
+            </span>
+            <span class="text-muted text-decoration-line-through">
+                {% if producto.descuento != 0 %}
+                    {{producto.precio}}€
+                {% endif %}
+            </span>
+        </span></h4>
         <button class="btn btn-warning w-100" onclick="alert('Producto añadido al carrito')">Añadir al carrito</button>
         <p class="mt-3 mb-0"><i class="bi bi-box"></i> <span class="text-decoration-underline">Envío a domicilio</span></p>
         <p class="text-muted">Envío GRATIS a España por compra superior a 499€</p>
@@ -26,10 +42,10 @@
     <div class="col-md">
         <strong class="fs-xx-large">Opiniones</strong><br />
         <dl>
-            <dt>Usuario 1 - ¡Excelente!</dt>
-            <dd class="ms-3">Excelente producto, muy recomendable.</dd>
-            <dt>Usuario 2 - Todo perfecto</dt>
-            <dd class="ms-3">El producto llegó en perfecto estado.</dd>
+            {% for opinion in opiniones %}
+            <dt>{{opinion.pedido.cliente.nombre}}</dt>
+            <dd class="ms-3">{{opinion.cuerpo}}</dd>
+            {% endfor %}
         </dl>
     </div>
 </div>
@@ -43,7 +59,21 @@
             </div>
             <div class="card-body">
                 <p class="card-text">{{sugerencia.nombre}}</p>
-                <h5 class="card-title">{{sugerencia.precio}}€</h5>
+                <h5 class="card-title"><span>
+                    {% if sugerencia.stock != 0 %}
+                        {{sugerencia.precio|subtract:sugerencia.descuento}}€
+                    {% endif %} 
+                    <span class="text-danger">
+                        {% if sugerencia.stock == 0 %}
+                            AGOTADO
+                        {% endif %} 
+                    </span>
+                    <span class="text-muted text-decoration-line-through">
+                        {% if sugerencia.descuento != 0 %}
+                            {{sugerencia.precio}}€
+                        {% endif %}
+                    </span>
+                </span></h5>
             </div>
           </div>
     </div>

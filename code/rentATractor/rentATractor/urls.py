@@ -31,7 +31,7 @@ urlpatterns = [
     path('domicilioPago/', views.domicilioPago),
     path('datosPago/', views.datosPago),
     path('pago/', views.payment_checkout),
-    path('confirmacion/', views.confirmacion),
+    path('confirmacion/<int:id>', views.confirmacion),
     path('cancelar/', views.cancelar),
     path('miCuenta/', views.miCuenta),
     path('favoritos/', views.favoritos),

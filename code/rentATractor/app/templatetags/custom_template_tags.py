@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from django import template
 register = template.Library()
 
@@ -6,15 +6,14 @@ register = template.Library()
 def setvar(val=None):
   return val
 
-@register.simple_tag
-def update_variable(value):
-    """Allows to update existing variable in template"""
-    return value
-
 @register.filter(name='subtract')
 def subtract(value, arg):
     return value - arg
 
-@register.filter(name='is_future_due')
-def is_future_due(self):
-    return date.today() <= self
+@register.filter(name='multiply')
+def multipy(value, arg):
+    return value * arg
+
+@register.filter(name='addOneWeek')
+def addOneWeek(self):
+    return self + timedelta(days=7)
