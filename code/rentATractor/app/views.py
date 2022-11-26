@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 
 from app.forms import OrderForm, SearchForm
 from app.models import Maquina
+import stripe
 
 # Create your views here.
 def index(request):
@@ -156,16 +157,31 @@ def pago(request):
 
     return render(request, 'pago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
-def confirmacion(request, pedido):
-    formulario = SearchForm()
+def payment_checkout(request):
+    stripe.api_key = 'sk_test_51M7jbDAogMfbRmsAelkebvd3Wsk0oeabaTqNZ959kYwIwazCJyYjOfE2N90zlDtieXZlxB41iNnEMEei0pnCw9YM000Tl9hu0p'
+    session = stripe.checkout.Session.create(
+    line_items=[{
+      'price_data': {
+        'currency': 'usd',
+        'product_data': {
+          'name': 'maquina',
+        },
+        'unit_amount': 2000,
+      },
+      'quantity': 1,
+    }],
+    mode='payment',
+    success_url='http://localhost:8000/confirmacion/',
+    cancel_url='http://localhost:8000/cancelar/',
+  )
 
-    if request.method == 'POST':
-        formulario = SearchForm(request.POST)
-        if formulario.is_valid():
-            request.session['search'] = formulario.cleaned_data['search']
-            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    return redirect(session.url)
 
-    return render(request, 'confirmacion.html', {'pedido': pedido, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+def confirmacion(request):
+    return render(request, 'confirmacion.html', {'STATIC_URL':settings.STATIC_URL})
+
+def cancelar(request):
+    return render(request, 'cancelar.html', {'STATIC_URL':settings.STATIC_URL})
 
 def miCuenta(request):
     formulario = SearchForm()

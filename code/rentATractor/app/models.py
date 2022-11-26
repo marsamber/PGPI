@@ -19,6 +19,7 @@ class TipoMaquina(Enum):
         return [(key.value, key.name)for key in cls]
 
 class EstadoPedido(Enum):
+    no_pagado = 'No pagado'
     comprado = 'Comprado'
     enviado = 'Enviado'
     recogido = 'Recogido'
