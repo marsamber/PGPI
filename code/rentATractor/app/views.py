@@ -2,11 +2,13 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 
 from app.forms import OrderForm, SearchForm
-from app.models import Maquina
+from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, Pedido
 import stripe
 
 # Create your views here.
 def index(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -15,9 +17,11 @@ def index(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'index.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+    return render(request, 'index.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def login(request):
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -26,10 +30,11 @@ def login(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'login.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'login.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 
 def register(request):
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -44,7 +49,10 @@ def catalogo(request, categoria):
     search = request.session.get('search')
     orden = ""
     productos = []
+    favoritos = ClienteRegistrado.objects.get(cliente__id = 1).gusta.all()
     tipoMaquina = categoriaToTipoMaquina(categoria)
+
+    cesta = EnCesta.objects.filter(cliente__id = 1)
 
     formulario = SearchForm()
     formularioOrdenacion = OrderForm()
@@ -97,12 +105,16 @@ def catalogo(request, categoria):
     elif search and orden == "":
         productos = Maquina.objects.filter(nombre__icontains=search)
     
-    return render(request, 'catalogo.html', {'categoria': categoria, 'productos': productos, 'formulario': formulario, 'formularioOrdenacion': formularioOrdenacion, 'orden': orden, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'catalogo.html', {'categoria': categoria, 'productos': productos, 'favoritos': favoritos, 'cesta': cesta, 'formulario': formulario, 'formularioOrdenacion': formularioOrdenacion, 'orden': orden, 'STATIC_URL':settings.STATIC_URL})
 
 def producto(request, id):
     producto = Maquina.objects.get(id=id)
+    opiniones = Opinion.objects.filter(maquina__id=id)
+    print(opiniones)
     sugerencias = Maquina.objects.filter(tipo_maquina__icontains=producto.tipo_maquina).exclude(id=id).order_by('?')[:3]
 
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -111,9 +123,16 @@ def producto(request, id):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'producto.html', {'producto': producto, 'sugerencias': sugerencias, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'producto.html', {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def cesta(request):
+    precioTotal = 0 
+    favoritos = ClienteRegistrado.objects.get(cliente__id = 1).gusta.all()
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
+    for producto in cesta:
+        precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -122,9 +141,15 @@ def cesta(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'cesta.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'cesta.html', {'precioTotal': precioTotal, 'favoritos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def domicilioPago(request):
+    precioTotal = 0 
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
+    for producto in cesta:
+        precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -133,9 +158,15 @@ def domicilioPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'domicilioPago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def datosPago(request):
+    precioTotal = 0
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
+    for producto in cesta:
+        precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -144,9 +175,11 @@ def datosPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'datosPago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'datosPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def pago(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -155,7 +188,7 @@ def pago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'pago.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'pago.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def payment_checkout(request):
     stripe.api_key = 'sk_test_51M7jbDAogMfbRmsAelkebvd3Wsk0oeabaTqNZ959kYwIwazCJyYjOfE2N90zlDtieXZlxB41iNnEMEei0pnCw9YM000Tl9hu0p'
@@ -177,13 +210,34 @@ def payment_checkout(request):
 
     return redirect(session.url)
 
-def confirmacion(request):
-    return render(request, 'confirmacion.html', {'STATIC_URL':settings.STATIC_URL})
+def confirmacion(request, id):
+    pedido = Pedido.objects.get(id=id)
+    contiene = Contiene.objects.filter(pedido__id=id)
+    precioTotal = 0
+
+    for c in contiene:
+        precioTotal += (c.maquina.precio - c.maquina.descuento) * c.cantidad
+
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
+    formulario = SearchForm()
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+
+    return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def cancelar(request):
-    return render(request, 'cancelar.html', {'STATIC_URL':settings.STATIC_URL})
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
+    return render(request, 'cancelar.html', {'cesta': cesta, 'STATIC_URL':settings.STATIC_URL})
 
 def miCuenta(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -192,9 +246,13 @@ def miCuenta(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'miCuenta.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'miCuenta.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def favoritos(request):
+    favoritos = ClienteRegistrado.objects.get(cliente__id=1).gusta.all()
+
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+    
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -203,9 +261,13 @@ def favoritos(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'favoritos.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'favoritos.html', {'productos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def misCompras(request):
+    pedidos = Pedido.objects.filter(cliente__id=1)
+
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -214,9 +276,11 @@ def misCompras(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
             
-    return render(request, 'misCompras.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'misCompras.html', {'pedidos': pedidos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def sobreNosotros(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -225,9 +289,11 @@ def sobreNosotros(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'sobreNosotros.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'sobreNosotros.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def contacto(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -236,9 +302,11 @@ def contacto(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'contacto.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'contacto.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def atencionCliente(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -247,9 +315,11 @@ def atencionCliente(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'atencionCliente.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'atencionCliente.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def seguimientoPedidos(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -258,9 +328,11 @@ def seguimientoPedidos(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'seguimientoPedidos.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'seguimientoPedidos.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def politicaDevolucion(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -269,9 +341,11 @@ def politicaDevolucion(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'politicaDevolucion.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'politicaDevolucion.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def reclamaciones(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+    
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -280,9 +354,11 @@ def reclamaciones(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'reclamaciones.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'reclamaciones.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def terminosCondicionesUso(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -291,9 +367,11 @@ def terminosCondicionesUso(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'terminosCondicionesUso.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'terminosCondicionesUso.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def politicaPrivacidad(request):
+    cesta = EnCesta.objects.filter(cliente__id = 1)
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -302,7 +380,7 @@ def politicaPrivacidad(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'politicaPrivacidad.html', {'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'politicaPrivacidad.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
    
 def categoriaToTipoMaquina(categoria):
     match categoria:

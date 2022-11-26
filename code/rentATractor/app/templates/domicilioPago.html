@@ -1,4 +1,6 @@
 {% extends 'master.html' %} {% block contenido %}
+{% load custom_template_tags %}
+
 <div class="text-center">
   <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
@@ -85,11 +87,25 @@
     <div class="card border-0 bg-light">
       <div class="card-body">
         <h3 class="card-title">Resumen del pedido</h3>
-        <p class="card-text d-flex justify-content-between mb-0"><span>Carretilla elevadora 1500kg</span><span>250€</span></p>
-        <p class="card-text fst-italic">1 unidad</p>
-        <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
-        <hr/>
-        <strong class="card-text d-flex justify-content-between"><span>Total</span><span>300€</span></strong>
+        {% for producto in cesta %}
+          <p class="card-text d-flex justify-content-between mb-0"><span class="pe-5 w-75">{{producto.maquina.nombre}}</span><span class="w-25 position-absolute end-0">
+                {% if producto.maquina.descuento != 0 %}
+                  {{producto.maquina.precio|subtract:producto.maquina.descuento|multiply:producto.cantidad}}
+                {% else %}
+                  {{producto.maquina.precio|multiply:producto.cantidad}}
+                {% endif %} €
+          </span></p>
+          <p class="card-text fst-italic">
+                {{producto.cantidad}} 
+                {% if producto.cantidad == 1%}
+                  unidad
+                {% else %}
+                  unidades
+                {% endif %}</p>
+          {% endfor %}
+          <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span class="w-25 position-absolute end-0">50 €</span></p>
+          <hr/>
+          <strong class="card-text d-flex justify-content-between"><span>Total</span><span class="w-25 position-absolute end-0">{{precioTotal|add:50}} €</span></strong>
       </div>
   </div>
   </div>
