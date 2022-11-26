@@ -1,21 +1,27 @@
 {% extends 'master.html' %} {% block contenido %}
-<div>
-  <h1 class="text-center">Contacto</h1>
 
+
+<div>
+  <h1 class="text-center">Valora el producto</h1>
   {% if submitted %}
   <p class="alert alert-success" role="alert" >
-    Su mensaje se ha enviado con éxito. Gracias por contactarnos!
+    Su opinión se ha publicado con éxito. Gracias!
   </p>
   {% else %}
-  <form action="/contacto/" method="POST">
+  {% if form.errors %}
+<p class="alert alert-danger" role="alert" >
+  El número de maquina introducido no corresponde con ninguna máquina de su pedido. Por favor, intentelo de nuevo.
+  </p>
+{% endif %}
+
+    <form action="/opinion/1" method="POST" >
       {% csrf_token %}
+
           {{form.as_p}}
       <div class="d-flex justify-content-center m-3">
         <button type="submit" class="btn btn-warning ">Enviar</button>
       </div>
     </form>
   {% endif %}
-
 </div>
-
 {% endblock %}

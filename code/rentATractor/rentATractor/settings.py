@@ -52,6 +52,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'rentATractor.urls'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 TEMPLATES = [
     {

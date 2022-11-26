@@ -6,83 +6,54 @@
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
 </div>
+<form action="/domicilioPago/" method="POST"></form>
 <div class="row mt-5">
   <div class="col-md-8">
     <div class="row">
+      
+      {% csrf_token %}
+      {{form }}
+      <!-- {% for field in form %}
+
       <div class="col">
-        <span>Nombre</span>
+        {{ form.field1 }}
       </div>
       <div class="col">
-        <span>Primer apellido</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <input type="text" class="form-control"  aria-label="Nombre">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" aria-label="PrimerApellido">
+        {{ form.field2 }}
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <span>País</span>
+        {{ form.field3 }}
       </div>
       <div class="col">
-        <span>Provincia</span>
+        {{ form.field4 }}
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <input type="text" class="form-control" aria-label="Pais">
+        {{ form.field5 }}
       </div>
       <div class="col">
-        <input type="text" class="form-control" aria-label="Provincia">
+        {{ form.field6 }}
       </div>
     </div>
     <div class="row">
       <div class="col-md-8">
-        <span>Nombre de la vía</span>
+        {{ form.field7 }}
       </div>
       <div class="col-md-4">
-        <span>Número</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
-        <input type="text" class="form-control" aria-label="NombreVia">
-      </div>
-      <div class="col-md-4">
-        <input type="text" class="form-control" aria-label="Numero">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <span>Código postal</span>
-      </div>
-      <div class="col">
-        <span>Población</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <input type="text" class="form-control" aria-label="CodigoPostal">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" aria-label="Poblacion">
+        {{ form.field8 }}
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-        <span>Móvil</span>
+        {{ form.field9 }}
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <input type="text" class="form-control" aria-label="Movil">
-      </div>
+      {% endfor %} -->
     </div>
   </div>
+  
   <div class="col-md-4">
     <div class="card border-0 bg-light">
       <div class="card-body">
@@ -114,4 +85,5 @@
   <button class="btn btn-outline-secondary w-25" onclick="location.href='/cesta'">Volver</button>
   <button class="btn btn-warning w-25" onclick="location.href='/datosPago'">Continuar</button>
 </div>
+</form>
 {% endblock %}
