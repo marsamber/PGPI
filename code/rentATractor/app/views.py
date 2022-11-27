@@ -146,6 +146,8 @@ def cesta(request):
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
+    precioTotalEnvio = precioTotal + 50
+
     formulario = SearchForm()
 
     if request.method == 'POST':
@@ -154,7 +156,7 @@ def cesta(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'cesta.html', {'precioTotal': precioTotal, 'favoritos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'cesta.html', {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'favoritos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def domicilioPago(request):
     precioTotal = 0 
@@ -162,6 +164,8 @@ def domicilioPago(request):
 
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
+    precioTotalEnvio = precioTotal + 50
 
     formulario = SearchForm()
     form = Step1Form()
@@ -174,7 +178,7 @@ def domicilioPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def datosPago(request):
     precioTotal = 0
@@ -182,6 +186,8 @@ def datosPago(request):
 
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
+    precioTotalEnvio = precioTotal + 50
 
     formulario = SearchForm()
     form = Step1Form()
@@ -192,7 +198,7 @@ def datosPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'datosPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'datosPago.html', {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL})
 
 def pago(request):
     cesta = EnCesta.objects.filter(cliente__id = 1)
@@ -234,6 +240,8 @@ def confirmacion(request, id):
 
     for c in contiene:
         precioTotal += (c.maquina.precio - c.maquina.descuento) * c.cantidad
+    
+    precioTotalEnvio = precioTotal + 50
 
     cesta = EnCesta.objects.filter(cliente__id = 1)
 
@@ -245,7 +253,7 @@ def confirmacion(request, id):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def cancelar(request):
     cesta = EnCesta.objects.filter(cliente__id = 1)
