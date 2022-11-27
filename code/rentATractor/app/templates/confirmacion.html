@@ -9,14 +9,14 @@
 <div class="row mt-5">
   <div class="col-md-8">
     <div class="row">
-      <strong class="fs-xx-large">Confirmación de pedido</strong>
+      <strong style="font-size: xx-large;">Confirmación de pedido</strong>
       <p>Se ha enviado un correo a {{pedido.cliente.correo}} con la confirmación del pedido número {{pedido.id}}</p>
     </div>
     <div class="row">
-      <strong class="fs-xx-large">Seguimiento de pedido</strong>
+      <strong style="font-size: xx-large;">Seguimiento de pedido</strong>
       {% for producto in pedido.maquina.all %}
       <div class="col-md-5">
-        <div class="card mb-3 border-0" id="card-cart">
+        <div class="card mb-3 border-0" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-6">
             <img src="../../media/{{producto.imagen}}" class="img-fluid rounded-start" alt="{{producto.nombre}}">
@@ -38,12 +38,12 @@
       {% endfor %}
     </div>
     <div class="row mt-2">
-      <strong class = "fs-xx-large">Domicilio de envío</strong>
+      <strong style = "font-size: xx-large;">Domicilio de envío</strong>
       <span>{{pedido.cliente.nombre}} {{pedido.cliente.apellidos}}</span> <br/>
       <span>{{pedido.direccion_envio}}</span> <br/>
     </div>
     <div class="row mt-2">
-      <strong class = "fs-xx-large">Domicilio de facturación</strong>
+      <strong style = "font-size: xx-large;">Domicilio de facturación</strong>
       <span>{{pedido.cliente.nombre}} {{pedido.cliente.apellidos}}</span> <br/>
       <span>{{pedido.direccion_facturacion}}</span> <br/>
     </div>
