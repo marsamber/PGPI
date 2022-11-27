@@ -50,8 +50,14 @@
   </div>
   <div class="col-md-4">
     <div class="row">
-      <span class="d-flex"><i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
+      <span class="d-flex">
+      {% if pedido.estado_pedido != 'No pagado' %}
+      <i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
       <p class="text-muted ms-4">{{pedido.fecha_pedido}}</p>
+      {% else %}
+      <i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
+      <p class="text-muted ms-4">--/--/----</p>
+      {% endif %}
       <span class="d-flex">
       {% if pedido.estado_pedido == 'Enviado' or pedido.estado_pedido == 'Recogido' %}
       <i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Enviado</p></span>
