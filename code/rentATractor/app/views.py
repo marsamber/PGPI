@@ -280,7 +280,7 @@ def favoritos(request):
 
     return render(request, 'favoritos.html', {'productos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
-def misCompras(request):
+def misPedidos(request):
     pedidos = Pedido.objects.filter(cliente__id=1)
 
     cesta = EnCesta.objects.filter(cliente__id = 1)
@@ -293,7 +293,7 @@ def misCompras(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
             
-    return render(request, 'misCompras.html', {'pedidos': pedidos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'misPedidos.html', {'pedidos': pedidos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def sobreNosotros(request):
     cesta = EnCesta.objects.filter(cliente__id = 1)
