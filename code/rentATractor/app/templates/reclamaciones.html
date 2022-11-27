@@ -1,24 +1,18 @@
 {% extends 'master.html' %} {% block contenido %}
 <div>
   <h1 class="text-center">Reclamaciones</h1>
-    <form action="/reclamaciones" method="POST">
-        <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" name="nombre" required>
-        </div>
-        <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="mb-3">
-        <label for="producto" class="form-label">Producto</label>
-        <input type="text" class="form-control" id="producto" name="producto" required>
-        </div>
-        <div class="mb-3">
-        <label for="mensaje" class="form-label">Mensaje</label>
-        <textarea class="form-control" id="mensaje" name="mensaje" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-warning">Enviar</button>
+  {% if submitted %}
+  <p class="alert alert-success" role="alert" >
+    Su mensaje se ha enviado con éxito. En breve se podrán en contacto con usted.
+  </p>
+  {% else %}
+    <form action="/reclamaciones/" method="POST">
+      {% csrf_token %}
+          {{form.as_p}}
+      <div class="d-flex justify-content-center m-3">
+        <button type="submit" class="btn btn-warning ">Enviar</button>
+      </div>
     </form>
+  {% endif %}
 </div>
 {% endblock %}

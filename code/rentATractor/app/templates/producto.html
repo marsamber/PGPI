@@ -32,7 +32,7 @@
 </div>
 <div class="row mt-5">
     <div class="col-md">
-        <strong class="fs-xx-large">Detalles del producto</strong><br />
+        <strong style="font-size: xx-large;">Detalles del producto</strong><br />
         <span><strong>Marca</strong>: {{producto.marca}} </span><br />
         <span><strong>Fabricante</strong>: {{producto.fabricante}}</span> <br />
         <span><strong>Dimensiones</strong>: {{producto.dimensiones}}</span> <br />
@@ -40,8 +40,11 @@
 </div>
 <div class="row mt-5">
     <div class="col-md">
-        <strong class="fs-xx-large">Opiniones</strong><br />
+        <strong style="font-size: xx-large;">Opiniones</strong><br />
         <dl>
+            {% if opiniones|length == 0 %}
+                <dd class="ms-3">No hay opiniones</dd>
+            {% endif %}
             {% for opinion in opiniones %}
             <dt>{{opinion.pedido.cliente.nombre}}</dt>
             <dd class="ms-3">{{opinion.cuerpo}}</dd>
@@ -50,11 +53,13 @@
     </div>
 </div>
 <div class="row mt-5">
-    <strong class="fs-xx-large">Sugerencias</strong>
+    <strong style="font-size: xx-large;">Sugerencias</strong>
     {% for sugerencia in sugerencias %}
     <div class="col-md-3 offset-md-1">
         <div class="card border-0">
-            <div class="square">
+            <div style="width: 100%;
+            height: 0;
+            padding-bottom: 100%;">
                 <img src="../../media/{{sugerencia.imagen}}" role="button" class="card-img-top" alt="{{sugerencia.nombre}}" onclick="location.href='/producto/{{sugerencia.id}}'">
             </div>
             <div class="card-body">

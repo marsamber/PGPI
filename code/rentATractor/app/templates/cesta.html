@@ -5,7 +5,7 @@
     <div class="col-md-8">
         <h3>Cesta ({{cesta|length}})</h3>
         {% for producto in cesta %}
-        <div class="card mb-3 border-0 card-cart">
+        <div class="card mb-3 border-0" class="max-width: 540px;">
             <div class="row g-0">
               <div class="col-md-4">
                 <img src="../../media/{{producto.maquina.imagen}}" class="img-fluid rounded-start" alt="{{producto.maquina.nombre}}">
