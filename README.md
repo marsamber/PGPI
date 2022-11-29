@@ -1,7 +1,6 @@
 # PGPI-G3.2
-Los comandos para inicializar y ejecutar el proyecto son:
-- ```python manage.py makemigrations```
-- ```python manage.py migrate```
+En un entorno con las dependencias instaladas, el comando para inicializar y ejecutar el proyecto es:
+
 - ```python manage.py runserver```
 
 La aplicación se puede encontrar en http://enprava.pythonanywhere.com/ 
