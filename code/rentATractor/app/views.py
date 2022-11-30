@@ -485,6 +485,12 @@ def politicaPrivacidad(request):
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
     return render(request, 'politicaPrivacidad.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+
+def error404(request):
+    return render(request, '404.html', {'STATIC_URL':settings.STATIC_URL})
+
+def error500(request):
+    return render(request, '500.html', {'STATIC_URL':settings.STATIC_URL})
    
 def categoriaToTipoMaquina(categoria):
     match categoria:
