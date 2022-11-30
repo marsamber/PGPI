@@ -1,4 +1,7 @@
 {% extends 'master.html' %} {% block contenido %}
+<script>
+  var stripe = Stripe('pk_test_51M7jbDAogMfbRmsAsI3YtWHGKCfGn62wE8FwauuaugS2auWctmSshr9jZ8YVWK1VEu51caloqvsYVcSKF8hhY2zF00tqxpgYOi');
+</script>
 <div class="text-center">
   <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
@@ -6,7 +9,7 @@
 </div>
 <div class="row mt-5">
   <div class="col-md-8 text-center">
-    <strong class="text-start" style="font-size: xx-large">Pago</strong><br/>
+    <strong class="text-start" style="font-size: xx-large;">Pago</strong><br/>
     <button class="btn btn-warning w-50 mt-2">Paypal</button><br/>
     <button class="btn btn-dark w-50 mt-2">Tarjeta de débito o crédito</button>
   </div>
@@ -25,6 +28,8 @@
 </div>
 <div class="row mt-5 d-flex justify-content-between">
   <button class="btn btn-outline-secondary w-25" onclick="location.href='/datosPago'">Volver</button>
-  <button class="btn btn-warning w-25" onclick="location.href='/confirmacion/1234'">Confirmar compra</button>
+  <form action="/create-checkout-session" method="POST">
+    <button class="btn btn-warning w-25">Confirmar compra</button>
+  </form>
 </div>
 {% endblock %}
