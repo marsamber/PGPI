@@ -21,6 +21,8 @@ from .models import Maquina, Opinion, Pedido, Reclamacion
 # Create your views here.
 def index(request):
     cesta = EnCesta.objects.filter(cliente__id = 1)
+    productos = Maquina.objects.all().filter(sugerido=True)
+    favoritos = ClienteRegistrado.objects.get(cliente__id = 1).gusta.all()
 
     formulario = SearchForm()
 
@@ -31,7 +33,7 @@ def index(request):
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
 
-    return render(request, 'index.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'index.html', {'cesta': cesta, 'productos': productos, 'favoritos': favoritos, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def login(request):
 
@@ -146,7 +148,7 @@ def cesta(request):
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
-    precioTotalEnvio = precioTotal + 50
+    precioTotalEnvio = precioTotal + 50 if precioTotal < 499 else precioTotal
 
     formulario = SearchForm()
 
@@ -165,8 +167,6 @@ def domicilioPago(request):
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
-    precioTotalEnvio = precioTotal + 50
-
     formulario = SearchForm()
     form = Step1Form()
 
@@ -178,16 +178,18 @@ def domicilioPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL':settings.STATIC_URL})
 
 def datosPago(request):
     precioTotal = 0
     cesta = EnCesta.objects.filter(cliente__id = 1)
+    pedido = Pedido.objects.filter(cliente__id = 1).last()
+    print(pedido.recogida_en_tienda)
 
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
-    precioTotalEnvio = precioTotal + 50
+    precioTotalEnvio = precioTotal + 50 if (precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
 
     formulario = SearchForm()
     form = Step1Form()
@@ -198,7 +200,7 @@ def datosPago(request):
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
-    return render(request, 'datosPago.html', {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'datosPago.html', {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'pedido': pedido, 'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL':settings.STATIC_URL})
 
 def pago(request):
     cesta = EnCesta.objects.filter(cliente__id = 1)
