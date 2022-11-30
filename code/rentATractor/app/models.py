@@ -2,6 +2,7 @@ from django.db import models
 from enum import Enum
 from django.contrib.auth.models import User
 
+
 class TipoMaquina(Enum):
     manipulacion_cargas = 'Manipulacion de cargas'
     movimiento_tierras = 'Movimiento de tierras'
@@ -16,7 +17,8 @@ class TipoMaquina(Enum):
 
     @classmethod
     def choices(cls):
-        return [(key.value, key.name)for key in cls]
+        return [(key.value, key.name) for key in cls]
+
 
 class EstadoPedido(Enum):
     no_pagado = 'No pagado'
@@ -26,7 +28,8 @@ class EstadoPedido(Enum):
 
     @classmethod
     def choices(cls):
-        return [(key.value, key.name)for key in cls]
+        return [(key.value, key.name) for key in cls]
+
 
 class Maquina(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -40,7 +43,9 @@ class Maquina(models.Model):
     imagen = models.CharField(max_length=256)
     tipo_maquina = models.CharField(choices=TipoMaquina.choices(), default=TipoMaquina.varios, max_length=256)
     descuento = models.FloatField(default=0.0)
-    
+    sugerido = models.BooleanField(default=False)
+
+
 class Cliente(models.Model):
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=64)
@@ -49,11 +54,13 @@ class Cliente(models.Model):
     fecha_nacimiento = models.DateField()
     correo = models.CharField(max_length=64)
 
+
 class ClienteRegistrado(models.Model):
     cliente = models.OneToOneField('Cliente', primary_key=True, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     direccion = models.CharField(max_length=256)
     gusta = models.ManyToManyField('Maquina')
+
 
 class Pedido(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -61,31 +68,38 @@ class Pedido(models.Model):
     direccion_envio = models.CharField(max_length=256)
     direccion_facturacion = models.CharField(max_length=256)
     estado_pedido = models.CharField(choices=EstadoPedido.choices(), default=EstadoPedido.comprado, max_length=256)
-    cliente = models.ForeignKey('Cliente',on_delete=models.CASCADE)
+    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
     maquina = models.ManyToManyField('Maquina')
-    tarjeta = models.ForeignKey('Tarjeta',null=True, on_delete=models.SET_NULL)
+    tarjeta = models.ForeignKey('Tarjeta', null=True, on_delete=models.SET_NULL)
+    pago_contrareembolso = models.BooleanField(default=False)
+    recogida_en_tienda = models.BooleanField(default=False)
+
 
 class Tarjeta(models.Model):
     titular = models.CharField(max_length=256)
     numero = models.CharField(max_length=256)
     codigo = models.CharField(max_length=256)
     fecha_validez = models.DateField()
-    usuario = models.ForeignKey(User,on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 class Opinion(models.Model):
     cuerpo = models.CharField(max_length=256)
     pedido = models.ForeignKey('Pedido', on_delete=models.CASCADE)
     maquina = models.ForeignKey('Maquina', on_delete=models.CASCADE)
 
+
 class Reclamacion(models.Model):
     cuerpo = models.CharField(max_length=256)
-    pedido = models.ForeignKey('Pedido',on_delete=models.CASCADE)
-    maquina = models.ForeignKey('Maquina',on_delete=models.CASCADE)
+    pedido = models.ForeignKey('Pedido', on_delete=models.CASCADE)
+    maquina = models.ForeignKey('Maquina', on_delete=models.CASCADE)
+
 
 class Contiene(models.Model):
     cantidad = models.IntegerField()
-    pedido = models.ForeignKey('Pedido',on_delete=models.CASCADE)
-    maquina = models.ForeignKey('Maquina',on_delete=models.CASCADE)
+    pedido = models.ForeignKey('Pedido', on_delete=models.CASCADE)
+    maquina = models.ForeignKey('Maquina', on_delete=models.CASCADE)
+
 
 class EnCesta(models.Model):
     maquina = models.ForeignKey("Maquina", on_delete=models.CASCADE)
