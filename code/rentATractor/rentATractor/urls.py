@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from app import views
 import django.views
 from django.conf import settings
@@ -22,19 +22,29 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
+    path('', views.index, name="homepage"),
     path('login/', views.login),
     path('register/', views.register),
     path('catalogo/<str:categoria>',views.catalogo),
-    path('producto/<str:nombre>',views.producto),
+    path('producto/<int:id>',views.producto),
     path('cesta/', views.cesta),
     path('domicilioPago/', views.domicilioPago),
     path('datosPago/', views.datosPago),
-    path('pago/', views.pago),
-    path('confirmacion/', views.confirmacion),
+    path('pago/', views.payment_checkout),
+    path('confirmacion/<int:id>', views.confirmacion),
+    path('cancelar/', views.cancelar),
     path('miCuenta/', views.miCuenta),
     path('favoritos/', views.favoritos),
-    path('misCompras/', views.misCompras),
+    path('misPedidos/', views.misPedidos),
+    path('sobreNosotros/', views.sobreNosotros),
+    path('contacto/', views.contacto),
+    path('atencionCliente/', views.atencionCliente),
+    path('seguimientoPedidos/', views.seguimientoPedidos),
+    path('politicaDevolucion/', views.politicaDevolucion),
+    path('reclamaciones/', views.reclamaciones),
+    path('opinion/<int:pedido>', views.opinion),  # CAMBIAR URL
+    path('terminosCondicionesUso/', views.terminosCondicionesUso),
+    path('politicaPrivacidad/', views.politicaPrivacidad),
     path('media/<path>', django.views.static.serve,
          {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

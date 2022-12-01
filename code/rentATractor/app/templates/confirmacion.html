@@ -1,4 +1,6 @@
 {% extends 'master.html' %} {% block contenido %}
+{% load custom_template_tags %}
+
 <div class="text-center">
   <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
@@ -7,64 +9,103 @@
 <div class="row mt-5">
   <div class="col-md-8">
     <div class="row">
-      <strong style="font-size: xx-large">Confirmación de pedido</strong>
-      <p>Se ha enviado un correo a mail@mail.com con la confirmación del pedido</p>
+      <strong style="font-size: xx-large;">Confirmación de pedido</strong>
+      <p>Se ha enviado un correo a {{pedido.cliente.correo}} con la confirmación del pedido número {{pedido.id}}</p>
     </div>
     <div class="row">
-      <strong style="font-size: xx-large">Seguimiento de pedido</strong>
-      <div class="card mb-3 border-0" style="max-width: 540px;">
+      <strong style="font-size: xx-large;">Seguimiento de pedido</strong>
+      {% for producto in pedido.maquina.all %}
+      <div class="col-md-5">
+        <div class="card mb-3 border-0" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-6">
-            <img src="../../media/carretilla2.png" class="img-fluid rounded-start" alt="Carretilla elevadora eléctrica">
+            <img src="../../media/{{producto.imagen}}" class="img-fluid rounded-start" alt="{{producto.nombre}}">
           </div>
           <div class="col-md-6">
             <div class="card-body">
-              <span class="d-flex"><i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
-              <p class="text-muted ms-4">01/01/2001</p>
-              <span class="d-flex"><i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Enviado</p></span>
-              <p class="text-muted ms-4">--/--/----</p>
-              <span class="d-flex"><i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Recogido</p></span>
-              <p class="text-muted ms-4">--/--/----</p>
+              <span>{{producto.nombre}}</span><br/>
+              <strong>
+                {% if producto.descuento != 0 %}
+                {{producto.precio|subtract:producto.descuento}}
+                {% else %}
+                {{producto.precio}}
+                {% endif %} €</strong>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <span>Carretilla elevadora 1500kg</span><br/>
-        <strong>250€</strong>
-      </div>
+    </div>
+      {% endfor %}
     </div>
     <div class="row mt-2">
-      <strong style="font-size: xx-large">Domicilio de envío</strong>
-      <span>Nombre y apellido</span> <br/>
-      <span>Nombre de la vía y número</span> <br/>
-      <span>Código postal - Población - Provincia</span> <br/>
-      <span>País</span> <br/>
-      <span>Móvil: 000000000</span>
+      <strong style = "font-size: xx-large;">Domicilio de envío</strong>
+      <span>{{pedido.cliente.nombre}} {{pedido.cliente.apellidos}}</span> <br/>
+      <span>{{pedido.direccion_envio}}</span> <br/>
     </div>
     <div class="row mt-2">
-      <strong style="font-size: xx-large">Domicilio de facturación</strong>
-      <span>Nombre y apellido</span> <br/>
-      <span>Nombre de la vía y número</span> <br/>
-      <span>Código postal - Población - Provincia</span> <br/>
-      <span>País</span> <br/>
-      <span>Móvil: 000000000</span>
+      <strong style = "font-size: xx-large;">Domicilio de facturación</strong>
+      <span>{{pedido.cliente.nombre}} {{pedido.cliente.apellidos}}</span> <br/>
+      <span>{{pedido.direccion_facturacion}}</span> <br/>
     </div>
   </div>
   <div class="col-md-4">
     <div class="row">
-      <span>Fecha de pedido: 01/01/2001</span> <br/>
-      <span>Número de pedido: 1234</span>
+      <span class="d-flex">
+      {% if pedido.estado_pedido != 'No pagado' %}
+      <i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
+      <p class="text-muted ms-4">{{pedido.fecha_pedido}}</p>
+      {% else %}
+      <i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Compra realizada</p></span>
+      <p class="text-muted ms-4">--/--/----</p>
+      {% endif %}
+      <span class="d-flex">
+      {% if pedido.estado_pedido == 'Enviado' or pedido.estado_pedido == 'Recogido' %}
+      <i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Enviado</p></span>
+      <p class="text-muted ms-4">{{pedido.fecha_pedido|addOneWeek}}</p>
+      {% else %}
+      <i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Enviado</p></span>
+      <p class="text-muted ms-4">--/--/----</p>
+      {% endif %}
+      <span class="d-flex">
+      {% if pedido.estado_pedido == 'Recogido' %}
+      <i class="bi bi-check2-square fs-4"></i>&nbsp;<p class="fs-5 mb-0">Recogido</p></span>
+      <p class="text-muted ms-4">{{pedido.fecha_pedido|addOneWeek|addOneWeek}}</p>
+      {% else %}
+      <i class="bi bi-square fs-5"></i>&nbsp;<p class="fs-5 mb-0">Recogido</p></span>
+      <p class="text-muted ms-4">--/--/----</p>
+      {% endif %}
     </div>
     <div class="row mt-2">
       <div class="card border-0 bg-light">
         <div class="card-body">
           <h3 class="card-title">Resumen del pedido</h3>
-          <p class="card-text d-flex justify-content-between mb-0"><span>Carretilla elevadora 1500kg</span><span>250€</span></p>
-          <p class="card-text fst-italic">1 unidad</p>
-          <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
+          {% for producto in pedido.maquina.all %}
+          <p class="card-text d-flex justify-content-between mb-0"><span class="pe-5 w-75">{{producto.nombre}}</span><span class="w-25 position-absolute end-0">
+            {% for prodUnidades in contiene %}
+              {% if prodUnidades.maquina.id == producto.id %}
+                {% if producto.descuento != 0 %}
+                  {{producto.precio|subtract:producto.descuento|multiply:prodUnidades.cantidad}}
+                {% else %}
+                  {{producto.precio|multiply:prodUnidades.cantidad}}
+                {% endif %} €
+              {% endif %}
+            {% endfor %}
+          </span></p>
+          <p class="card-text fst-italic">
+            {% for prodUnidades in contiene %}
+              {% if prodUnidades.maquina.id == producto.id %}
+                {{prodUnidades.cantidad}} 
+                {% if prodUnidades.cantidad == 1%}
+                  unidad
+                {% else %}
+                  unidades
+                {% endif %}
+              {% endif %}
+            {% endfor %}</p>
+          {% endfor %}
+          <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span class="w-25 position-absolute end-0">50 €</span></p>
           <hr/>
-          <strong class="card-text d-flex justify-content-between"><span>Total</span><span>300€</span></strong>
+          <strong class="card-text d-flex justify-content-between"><span>Total</span><span class="w-25 position-absolute end-0">{{precioTotalEnvio}} €</span></strong>
         </div>
       </div>
     </div>

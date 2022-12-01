@@ -1,0 +1,18 @@
+{% extends 'master.html' %} {% block contenido %}
+<div>
+  <h1 class="text-center">Reclamaciones</h1>
+  {% if submitted %}
+  <p class="alert alert-success" role="alert" >
+    Su mensaje se ha enviado con éxito. En breve se podrán en contacto con usted.
+  </p>
+  {% else %}
+    <form action="/reclamaciones/" method="POST">
+      {% csrf_token %}
+          {{form.as_p}}
+      <div class="d-flex justify-content-center m-3">
+        <button type="submit" class="btn btn-warning ">Enviar</button>
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

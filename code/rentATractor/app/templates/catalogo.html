@@ -1,69 +1,61 @@
 {% extends 'master.html' %} {% block contenido %}
+{% load custom_template_tags %}
+
 <div class="d-flex justify-content-between">
     <h1>{{categoria}}</h1>
-    <select class="form-select w-25" aria-label="Default select example">
-        <option selected>Ordenar por</option>
-        <option value="1">Nombre ascendente</option>
-        <option value="2">Nombre descendente</option>
-        <option value="3">Precio ascendente</option>
-        <option value="4">Precio descendente</option>
-      </select>
+    <form action="" method="post" class="d-flex">
+        {% csrf_token %}
+        {{formularioOrdenacion}}
+    </form>
 </div>
 <div>
     <div class="row mt-5">
+        {% for producto in productos %}
         <div class="col-md-3 offset-md-1">
             <div class="card border-0">
-                <img src="../../media/carretilla1.png" class="card-img-top" role="button" alt="Carretilla elevadora eléctrica" style="opacity: 1;" onclick="location.href='/producto/Carretilla elevadora eléctrica 1500kg'">
+                <div style="width: 100%;
+                height: 0;
+                padding-bottom: 100%;">                
+                    <img src= "../../media/{{producto.imagen}}" class="card-img-top img-fluid" 
+                    {% if producto.stock == 0 %}
+                        style="opacity: 0.5;"
+                    {% endif %}
+                    role="button" alt="{{producto.nombre}}" onclick="location.href='/producto/{{producto.id}}'">
+                    {% if producto.descuento != 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">%</span>
+                    {% endif %}
+                </div>
                 <div class="card-body">
-                  <p class="card-text">Carretilla elevadora eléctrica 1500kg</p>
-                  <h5 class="card-title d-flex justify-content-between"><span>350€ <span class="text-danger"> </span> <span class="text-muted text-decoration-line-through"></span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
+                    <p class="card-text">{{producto.nombre}}</p>
+                    <h5 class="card-title d-flex justify-content-between">
+                        <span>
+                            {% if producto.stock != 0 %}
+                                {{producto.precio|subtract:producto.descuento}}€
+                            {% endif %} 
+                            <span class="text-danger">
+                                {% if producto.stock == 0 %}
+                                    AGOTADO
+                                {% endif %} 
+                            </span>
+                            <span class="text-muted text-decoration-line-through">
+                                {% if producto.descuento != 0 %}
+                                    {{producto.precio}}€
+                                {% endif %}
+                            </span>
+                        </span>
+                        <a role="button" onclick="alert('Añadido a favoritos')">
+                            {% if producto in favoritos %}
+                            <i class="bi bi-bookmark-fill"></i>
+                            {% else %}
+                            <i class="bi bi-bookmark"></i>
+                            {% endif %}
+                        </a>
+                    </h5>
                   <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
                 </div>
               </div>
         </div>
-        <div class="col-md-3 offset-md-1">
-            <div class="card border-0">
-                <img src="../../media/carretilla2.png" class="card-img-top" role="button" alt="Carretilla elevadora eléctrica" style="opacity: 1;" onclick="location.href='/producto/Carretilla elevadora 1500kg'">
-                <div class="card-body">
-                    <p class="card-text">Carretilla elevadora 1500kg</p>
-                    <h5 class="card-title d-flex justify-content-between"><span>250€ <span class="text-danger"> </span> <span class="text-muted text-decoration-line-through"></span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
-                    <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
-                  </div>
-              </div>
-        </div>
-        <div class="col-md-3 offset-md-1">
-            <div class="card border-0">
-                <img src="../../media/carretilla3.png" class="card-img-top" role="button" alt="Carretilla elevadora eléctrica" style="opacity: 0.5;" onclick="location.href='/producto/Carretilla elevadora 1200kg'">
-                <div class="card-body">
-                    <p class="card-text">Carretilla elevadora 1200kg</p>
-                    <h5 class="card-title d-flex justify-content-between"><span> <span class="text-danger">AGOTADO</span> <span class="text-muted text-decoration-line-through"></span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
-                    <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
-                  </div>
-              </div>
-        </div>
-    </div>
-    <div class="row mt-5">
-        <div class="col-md-3 offset-md-1">
-            <div class="card border-0">
-                <img src="../../media/carretilla4.png" class="card-img-top" role="button" alt="Carretilla elevadora eléctrica" style="opacity: 1;" onclick="location.href='/producto/Carretilla elevadora 2500kg'">
-                <div class="card-body">
-                    <p class="card-text">Carretilla elevadora 2500kg</p>
-                    <h5 class="card-title d-flex justify-content-between"><span>390€ <span class="text-danger"> </span> <span class="text-muted text-decoration-line-through"></span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
-                    <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
-                  </div>
-              </div>
-        </div>
-        <div class="col-md-3 offset-md-1">
-            <div class="card border-0">
-                <img src="../../media/carretilla5.png" class="card-img-top" role="button" alt="Carretilla elevadora eléctrica" style="opacity: 1;" onclick="location.href='/producto/Carretilla elevadora apiladora'">
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">%</span>
-                <div class="card-body">
-                    <p class="card-text">Carretilla elevadora apiladora</p>
-                    <h5 class="card-title d-flex justify-content-between"><span> <span class="text-danger">110€ </span> <span class="text-muted text-decoration-line-through">150€</span></span><a role="button" onclick="alert('Añadido a favoritos')"><i class="bi bi-bookmark-fill"></i></a></h5>
-                    <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
