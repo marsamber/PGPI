@@ -185,7 +185,7 @@ def cesta(request):
 
 def addCesta(request, id):
     producto = Maquina.objects.get(pk=id)
-    cliente = Cliente.objects.get(id=request.user.id)
+    cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente().first()
     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
         enCesta.cantidad = enCesta.cantidad + 1
@@ -196,8 +196,7 @@ def addCesta(request, id):
 
 def removeCesta(request, id):
     producto = Maquina.objects.get(pk=id)
-    cliente = Cliente.objects.get(id=request.user.id)
-    print(cliente)
+    cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
         print(enCesta)
@@ -206,8 +205,8 @@ def removeCesta(request, id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
     
 def updateCesta(request, id, cantidad):
-    producto = Maquina.objects.get(id=id)
-    cliente = Cliente.objects.get(id=request.user.id)
+    producto = Maquina.objects.get(pk=id)
+    cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
         print(enCesta)
@@ -577,12 +576,12 @@ def politicaPrivacidad(request):
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
 
 
-def error404(request):
-    return render(request, '404.html', {'STATIC_URL': settings.STATIC_URL})
+# def error404(request):
+#     return render(request, '404.html', {'STATIC_URL': settings.STATIC_URL})
 
 
-def error500(request):
-    return render(request, '500.html', {'STATIC_URL': settings.STATIC_URL})
+# def error500(request):
+#     return render(request, '500.html', {'STATIC_URL': settings.STATIC_URL})
 
 
 def categoriaToTipoMaquina(categoria):
