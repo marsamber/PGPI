@@ -4,6 +4,7 @@
 <div class="row">
     <div class="col-md-8">
         <h3>Cesta ({{cesta|length}})</h3>
+        {% csrf_token %}
         {% for producto in cesta %}
         <div class="card mb-3 border-0" class="max-width: 540px;">
             <div class="row g-0">
@@ -25,8 +26,11 @@
                       <i class="bi bi-bookmark"></i>
                       {% endif %}</a></span> <br/>
                   <div class="input-group flex-nowrap">
-                    <input type="number" class="form-control" value="{{producto.cantidad}}" min="1" aria-label="Unidades" aria-describedby="addon-wrapping" onchange="value < min ? value=min : value=value"/>
-                    <span class="input-group-text" id="addon-wrapping" role="button" onclick="alert('Eliminar producto de la cesta')"><i class="bi bi-trash"></i></span>
+                    <input type="number" class="form-control" value="{{producto.cantidad}}" min="1" aria-label="Unidades" aria-describedby="addon-wrapping" onchange="document.location.href = '/cesta/update/{{producto.id}}/' + this.value">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <a href="/cesta/remove/{{producto.id}}/">
+                      <span class="input-group-text" id="addon-wrapping" role="button" onclick="alert('Eliminar producto de la cesta')"><i class="bi bi-trash"></i></span>
+                    </a>
                   </div>
                 </div>
               </div>

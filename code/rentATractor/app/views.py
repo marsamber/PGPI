@@ -16,7 +16,7 @@ from app.forms import OrderForm, SearchForm, LoginForm
 from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, Pedido
 import stripe
 from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm
-from .models import Maquina, Opinion, Pedido, Reclamacion
+from .models import Cliente, Maquina, Opinion, Pedido, Reclamacion
 from django.contrib.auth import authenticate, login as log
 
 
@@ -183,6 +183,41 @@ def cesta(request):
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'favoritos': favoritos,
                    'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
 
+def addCesta(request, id):
+    producto = Maquina.objects.get(pk=id)
+    cliente = Cliente.objects.get(id=request.user.id)
+    if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+        enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+        enCesta.cantidad = enCesta.cantidad + 1
+        enCesta.save()
+    else:
+        EnCesta.objects.create(cliente=cliente, maquina=producto, cantidad=1)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+
+def removeCesta(request, id):
+    producto = Maquina.objects.get(pk=id)
+    cliente = Cliente.objects.get(id=request.user.id)
+    print(cliente)
+    if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+        enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+        print(enCesta)
+        enCesta.cantidad = 0
+        enCesta.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+    
+def updateCesta(request, id, cantidad):
+    producto = Maquina.objects.get(id=id)
+    cliente = Cliente.objects.get(id=request.user.id)
+    if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+        enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+        print(enCesta)
+        if cantidad == '0':
+            enCesta.delete()
+        else:
+            enCesta.cantidad = cantidad
+            enCesta.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def domicilioPago(request):
     precioTotal = 0
@@ -208,7 +243,7 @@ def domicilioPago(request):
 
 def datosPago(request):
     precioTotal = 0
-    cesta = EnCesta.objects.filter(cliente__id=1)
+    cesta = EnCesta.objects.filter(cliente__id=opinion)
     pedido = Pedido.objects.filter(cliente__id=1).last()
     print(pedido.recogida_en_tienda)
 
