@@ -95,34 +95,32 @@ def catalogo(request, categoria):
                 return redirect('/catalogo/Resultados de: ' + request.session['search'])
         if formularioOrdenacion.is_valid():
             orden = request.POST.get('order')
-            print(orden)
             if orden == 'name asc':
                 if search:
-                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('nombre')
+                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('nombre')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('nombre')
-                print(productos)
             elif orden == 'name desc':
                 if search:
-                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('-nombre')
+                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('-nombre')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-nombre')
                 print(productos)
             elif orden == 'price asc':
                 if search:
-                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('precio')
+                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('precio')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('precio')
                 print(productos)
             elif orden == 'price desc':
                 if search:
-                    productos = Maquina.objects.filter(nombre__icontains=search).order_by('-precio')
+                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('-precio')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-precio')
                 print(productos)
             elif orden == 'ordenar':
                 if search:
-                    productos = Maquina.objects.filter(nombre__icontains=search)
+                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search))
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
 
@@ -132,7 +130,7 @@ def catalogo(request, categoria):
     elif not search and orden == "":
         productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
     elif search and orden == "":
-        productos = Maquina.objects.filter(nombre__icontains=search)
+        productos = Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search))
 
     return render(request, 'catalogo.html',
                   {'categoria': categoria, 'productos': productos, 'favoritos': favoritos, 'cesta': cesta,
