@@ -1,95 +1,95 @@
 {% extends 'master.html' %} {% block contenido %}
+{% load custom_template_tags %}
+
 <div class="text-center">
   <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
 </div>
+<form action="/domicilioPago/" method="POST"></form>
 <div class="row mt-5">
   <div class="col-md-8">
     <div class="row">
+      
+      {% csrf_token %}
+      {{form }}
+      <!-- {% for field in form %}
+
       <div class="col">
-        <span>Nombre</span>
+        {{ form.field1 }}
       </div>
       <div class="col">
-        <span>Primer apellido</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <input type="text" class="form-control"  aria-label="Nombre">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" aria-label="PrimerApellido">
+        {{ form.field2 }}
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <span>País</span>
+        {{ form.field3 }}
       </div>
       <div class="col">
-        <span>Provincia</span>
+        {{ form.field4 }}
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <input type="text" class="form-control" aria-label="Pais">
+        {{ form.field5 }}
       </div>
       <div class="col">
-        <input type="text" class="form-control" aria-label="Provincia">
+        {{ form.field6 }}
       </div>
     </div>
     <div class="row">
       <div class="col-md-8">
-        <span>Nombre de la vía</span>
+        {{ form.field7 }}
       </div>
       <div class="col-md-4">
-        <span>Número</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
-        <input type="text" class="form-control" aria-label="NombreVia">
-      </div>
-      <div class="col-md-4">
-        <input type="text" class="form-control" aria-label="Numero">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <span>Código postal</span>
-      </div>
-      <div class="col">
-        <span>Población</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <input type="text" class="form-control" aria-label="CodigoPostal">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" aria-label="Poblacion">
+        {{ form.field8 }}
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-        <span>Móvil</span>
+        {{ form.field9 }}
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <input type="text" class="form-control" aria-label="Movil">
-      </div>
+      {% endfor %} -->
     </div>
   </div>
+  
   <div class="col-md-4">
     <div class="card border-0 bg-light">
       <div class="card-body">
         <h3 class="card-title">Resumen del pedido</h3>
-        <p class="card-text d-flex justify-content-between mb-0"><span>Carretilla elevadora 1500kg</span><span>250€</span></p>
-        <p class="card-text fst-italic">1 unidad</p>
-        <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span>50€</span></p>
-        <hr/>
-        <strong class="card-text d-flex justify-content-between"><span>Total</span><span>300€</span></strong>
+        {% for producto in cesta %}
+          <p class="card-text d-flex justify-content-between mb-0"><span class="pe-5 w-75">{{producto.maquina.nombre}}</span><span class="w-25 position-absolute end-0">
+                {% if producto.maquina.descuento != 0 %}
+                  {{producto.maquina.precio|subtract:producto.maquina.descuento|multiply:producto.cantidad}}
+                {% else %}
+                  {{producto.maquina.precio|multiply:producto.cantidad}}
+                {% endif %} €
+          </span></p>
+          <p class="card-text fst-italic">
+                {{producto.cantidad}} 
+                {% if producto.cantidad == 1%}
+                  unidad
+                {% else %}
+                  unidades
+                {% endif %}</p>
+          {% endfor %}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+            <label class="form-check-label" for="flexRadioDefault1">
+              Recoger en tienda <br/>
+              <span class="text-muted" style="font-size: smaller;">Gastos de envío gratuitos</span>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+            <label class="form-check-label" for="flexRadioDefault2">
+              Envío a domicilio (50 € gastos de envío)<br/>
+              <span class="text-muted" style="font-size: smaller;">Envío GRATIS a España por compra superior a 499€</span>
+            </label>
+          </div>
+          <hr/>
+          <strong class="card-text d-flex justify-content-between"><span>Total (sin gastos de envío)</span><span class="w-25 position-absolute end-0">{{precioTotal}} €</span></strong>
       </div>
   </div>
   </div>
@@ -98,4 +98,5 @@
   <button class="btn btn-outline-secondary w-25" onclick="location.href='/cesta'">Volver</button>
   <button class="btn btn-warning w-25" onclick="location.href='/datosPago'">Continuar</button>
 </div>
+</form>
 {% endblock %}

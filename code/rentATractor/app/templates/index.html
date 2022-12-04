@@ -1,11 +1,66 @@
 {% extends 'masterIndex.html' %} {% block contenido %}
-<strong style="font-size:3vw">Alquiler</strong>
-<p style="font-size:3vw">de maquinaria de construcción</p>
+{% load custom_template_tags %}
+
+<strong style="font-size: 3vw;">Alquiler</strong>
+<p style="font-size: 3vw;">de maquinaria de construcción</p>
 <form class="d-flex" role="search" action="" method="post">
     {% csrf_token %}
     {{formulario}}
     <button class="btn btn-warning" type="submit"><span class="d-flex">BUSCAR&nbsp;<i class="bi bi-search"></i></span></button>
 </form>
+<div class="bg-white mt-5">
+    <div class="row pt-3">
+        <strong class="text-center fs-3">SUGERENCIAS DEL VENDEDOR</strong>
+    </div>
+    <div class="row mt-3 pe-5">
+        {% for producto in productos %}
+        <div class="col-md-3 offset-md-1">
+            <div class="card border-0">
+                <div style="width: 100%;
+                height: 0;
+                padding-bottom: 100%;">                
+                    <img src= "../../media/{{producto.imagen}}" class="card-img-top img-fluid" 
+                    {% if producto.stock == 0 %}
+                        style="opacity: 0.5;"
+                    {% endif %}
+                    role="button" alt="{{producto.nombre}}" onclick="location.href='/producto/{{producto.id}}'">
+                    {% if producto.descuento != 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">%</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{producto.nombre}}</p>
+                    <h5 class="card-title d-flex justify-content-between">
+                        <span>
+                            {% if producto.stock != 0 %}
+                                {{producto.precio|subtract:producto.descuento}}€
+                            {% endif %} 
+                            <span class="text-danger">
+                                {% if producto.stock == 0 %}
+                                    AGOTADO
+                                {% endif %} 
+                            </span>
+                            <span class="text-muted text-decoration-line-through">
+                                {% if producto.descuento != 0 %}
+                                    {{producto.precio}}€
+                                {% endif %}
+                            </span>
+                        </span>
+                        <a role="button" onclick="alert('Añadido a favoritos')">
+                            {% if producto in favoritos %}
+                            <i class="bi bi-bookmark-fill"></i>
+                            {% else %}
+                            <i class="bi bi-bookmark"></i>
+                            {% endif %}
+                        </a>
+                    </h5>
+                  <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <div class="bg-white mt-5">
     <div class="row pt-3">
         <strong class="text-center fs-3">CATEGORÍAS</strong>
