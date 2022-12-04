@@ -105,3 +105,19 @@ class EnCesta(models.Model):
     maquina = models.ForeignKey("Maquina", on_delete=models.CASCADE)
     cliente = models.ForeignKey("Cliente", on_delete=models.CASCADE)
     cantidad = models.IntegerField()
+
+class Factura(models.Model):
+    pedido = models.OneToOneField('Pedido', primary_key=True, on_delete=models.CASCADE)
+    fecha = models.DateField()
+    nombre_cliente = models.CharField(max_length=256)
+    apellidos_cliente = models.CharField(max_length=256)
+    direccion = models.CharField(max_length=256)
+    dni = models.CharField(max_length=256)
+
+class LineaFactura(models.Model):
+    factura = models.ForeignKey('Factura', on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=256)
+    iva = models.FloatField()
+    precio_sin_iva = models.FloatField()
+    descuento = models.FloatField(default=0.0)
+    cantidad = models.IntegerField()
