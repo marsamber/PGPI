@@ -15,9 +15,9 @@ from django.contrib import messages
 from app.forms import OrderForm, SearchForm, LoginForm
 from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, Pedido
 import stripe
-from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm
+from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm
 from .models import Maquina, Opinion, Pedido, Reclamacion
-from django.contrib.auth import authenticate, login as log
+from django.contrib.auth import authenticate, login as log, logout as django_logout
 
 
 # Create your views here.
@@ -26,48 +26,69 @@ def index(request):
     productos = Maquina.objects.all().filter(sugerido=True)
     favoritos = ClienteRegistrado.objects.get(cliente__id=1).gusta.all()
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'index.html',
                   {'cesta': cesta, 'productos': productos, 'favoritos': favoritos, 'formulario': formulario,
-                   'STATIC_URL': settings.STATIC_URL})
+                   'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def login(request):
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     login_form = LoginForm()
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-    return render(request, 'login.html', {'cesta': cesta, 'login': formulario, 'login_form': login_form,
-                                          'STATIC_URL': settings.STATIC_URL})
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    cesta = EnCesta.objects.filter(cliente__id=1)
+    return render(request, 'login.html', {'cesta': cesta, 'formulario': formulario, 'login_form': login_form,
+                                          'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
+
+def logout(request):
+    # if request.method == 'POST':
+    django_logout(request)
+    return index(request)
 
 
 def autenticar(request):
+    formulario = SearchForm(initial={'search': None})
     if request.method == 'POST':
+        if formulario.is_valid() and formulario.has_changed():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
         user_name = request.POST['user']
         password = request.POST['password']
         user = authenticate(request, username=user_name, password=password)
         if user is not None:
             log(request, user)
-            return redirect('')
+            return index(request)
         else:
-            return render(request, "login_error.html", {})
+            cesta = EnCesta.objects.filter(cliente__id=1)
+            return render(request, "login_error.html", {'cesta': cesta, 'formulario': formulario,
+                                                        'STATIC_URL': settings.STATIC_URL})
+
 
 def register(request):
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
@@ -83,14 +104,14 @@ def catalogo(request, categoria):
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     formularioOrdenacion = OrderForm()
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
         formularioOrdenacion = OrderForm(request.POST)
         if request.POST.get('search') != None and request.POST.get('search') != "":
-            if formulario.is_valid():
+            if formulario.is_valid() and formulario.has_changed():
                 request.session['search'] = formulario.cleaned_data['search']
                 return redirect('/catalogo/Resultados de: ' + request.session['search'])
         if formularioOrdenacion.is_valid():
@@ -133,11 +154,14 @@ def catalogo(request, categoria):
         productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
     elif search and orden == "":
         productos = Maquina.objects.filter(nombre__icontains=search)
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'catalogo.html',
                   {'categoria': categoria, 'productos': productos, 'favoritos': favoritos, 'cesta': cesta,
                    'formulario': formulario, 'formularioOrdenacion': formularioOrdenacion, 'orden': orden,
-                   'STATIC_URL': settings.STATIC_URL})
+                   'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def producto(request, id):
@@ -148,17 +172,20 @@ def producto(request, id):
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'producto.html',
                   {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'cesta': cesta,
-                   'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                   'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def cesta(request):
@@ -171,17 +198,20 @@ def cesta(request):
 
     precioTotalEnvio = precioTotal + 50 if precioTotal < 499 else precioTotal
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'cesta.html',
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'favoritos': favoritos,
-                   'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                   'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def domicilioPago(request):
@@ -191,19 +221,22 @@ def domicilioPago(request):
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     form = Step1Form()
 
     if request.method == 'POST':
         form = Step1Form(request.POST)
 
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario,
-                                                  'STATIC_URL': settings.STATIC_URL})
+                                                  'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def datosPago(request):
@@ -217,32 +250,39 @@ def datosPago(request):
 
     precioTotalEnvio = precioTotal + 50 if (precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     form = Step1Form()
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'datosPago.html',
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'pedido': pedido, 'cesta': cesta,
-                   'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL})
+                   'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def pago(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
-    return render(request, 'pago.html', {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, 'pago.html',
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def payment_checkout(request):
@@ -278,38 +318,58 @@ def confirmacion(request, id):
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal,
                                                  'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta,
-                                                 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                                                 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
+                                                 'cliente': cliente})
 
 
 def cancelar(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
-
-    return render(request, 'cancelar.html', {'cesta': cesta, 'STATIC_URL': settings.STATIC_URL})
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, 'cancelar.html', {'cesta': cesta, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def miCuenta(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
-
-    formulario = SearchForm()
-
+    clienteregistrado = ClienteRegistrado.objects.get(user=request.user.id)
+    cliente = clienteregistrado.cliente
+    formulario = SearchForm(initial={'search': None})
+    micuenta = MiCuentaForm(
+        initial={'nombre': cliente.nombre, 'apellidos': cliente.apellidos, 'dni': cliente.dni, 'email': cliente.correo,
+                 'fecha_nacimiento': cliente.fecha_nacimiento, 'direccion': clienteregistrado.direccion})
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+        micuenta = MiCuentaForm(request.POST)
+        if micuenta.is_valid() and micuenta.has_changed():
+            cliente.nombre = micuenta.cleaned_data['nombre']
+            cliente.apellidos = micuenta.cleaned_data['apellidos']
+            cliente.dni = micuenta.cleaned_data['dni']
+            cliente.correo = micuenta.cleaned_data['email']
+            cliente.fecha_nacimiento = micuenta.cleaned_data['fecha_nacimiento']
+            clienteregistrado.direccion = micuenta.cleaned_data['direccion']
+            cliente.save()
+            clienteregistrado.save()
     return render(request, 'miCuenta.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente,
+                   'micuenta_form': micuenta})
 
 
 def favoritos(request):
@@ -317,16 +377,20 @@ def favoritos(request):
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'favoritos.html',
-                  {'productos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'productos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
+                   'cliente': cliente})
 
 
 def misPedidos(request):
@@ -334,37 +398,44 @@ def misPedidos(request):
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'misPedidos.html',
-                  {'pedidos': pedidos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'pedidos': pedidos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
+                   'cliente': cliente})
 
 
 def sobreNosotros(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'sobreNosotros.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def contacto(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     form = ContactForm()
     submitted = False
     if request.method == 'POST':
@@ -385,68 +456,81 @@ def contacto(request):
             return redirect('/contacto?submitted=True')
 
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
     else:
         if 'submitted' in request.GET:
             submitted = True
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'contacto.html',
-                  {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
+                   'cliente': cliente})
 
 
 def atencionCliente(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'atencionCliente.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def seguimientoPedidos(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'seguimientoPedidos.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def politicaDevolucion(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'politicaDevolucion.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def reclamaciones(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
     form = ComplaintForm()
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     submitted = False
 
     if request.method == 'POST':
@@ -465,22 +549,25 @@ def reclamaciones(request):
             return redirect('/reclamaciones?submitted=True')
 
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
     else:
         if 'submitted' in request.GET:
             submitted = True
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'reclamaciones.html',
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
-                   'submitted': submitted})
+                   'submitted': submitted, 'cliente': cliente})
 
 
 def opinion(request, pedido):
     form = OpinionForm()
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
     submitted = False
 
     if request.method == 'POST':
@@ -500,54 +587,72 @@ def opinion(request, pedido):
                 form._errors['machine'] = form.add_error('machine', '')
 
         # formulario = SearchForm(request.POST)
-        # if formulario.is_valid():
+        # if formulario.is_valid() and formulario.has_changed():
         #     request.session['search'] = formulario.cleaned_data['search']
         #     return redirect('/catalogo/Resultados de: ' + request.session['search'])
 
     else:
         if 'submitted' in request.GET:
             submitted = True
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'opinion.html',
-                  {'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'submitted': submitted})
+                  {'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'submitted': submitted,
+                   'cliente': cliente})
 
 
 def terminosCondicionesUso(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'terminosCondicionesUso.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def politicaPrivacidad(request):
     cesta = EnCesta.objects.filter(cliente__id=1)
 
-    formulario = SearchForm()
+    formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
-        if formulario.is_valid():
+        if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
     return render(request, 'politicaPrivacidad.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def error404(request):
-    return render(request, '404.html', {'STATIC_URL': settings.STATIC_URL})
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, '404.html', {'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def error500(request):
-    return render(request, '500.html', {'STATIC_URL': settings.STATIC_URL})
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, '500.html', {'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def categoriaToTipoMaquina(categoria):

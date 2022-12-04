@@ -1,0 +1,12 @@
+{% for field in form %}
+    {% if field.label == 'Nombre' or field.label == 'Fecha de nacimiento' or field.label == 'Correo electrónico' %}
+        <div class="row">
+    {% endif %}
+<div class="col">
+    <span>{{ field.label_tag }}</span>
+    {{ field }}
+</div>
+{% if field.label_tag == 'Nombre' or field.label_tag == 'Fecha de nacimiento' or field.label_tag == 'Correo electrónico' %}
+    </div>
+    {% endif %}
+{% endfor %}

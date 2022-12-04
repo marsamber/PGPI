@@ -48,9 +48,18 @@
                     {{formulario}}
                     <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
                 </form>
+                {% if cliente %}
                 <li class="nav-item mx-2">
-                  <a class="nav-link" href="/login">Mi cuenta</a>
+                  <a class="nav-link" href="/miCuenta">{{ cliente.nombre }}</a>
                 </li>
+                <li class="nav-item mx-2">
+                  <a class="nav-link" href="/logout"> Cerrar sesión</a>
+                </li>
+                {% else %}
+                <li class="nav-item mx-2">
+                  <a class="nav-link" href="/login">Iniciar sesión</a>
+                </li>
+                {% endif %}
                 <li class="nav-item mx-2">
                   <button type="button" class="position-relative btn border-0" data-bs-toggle="modal" data-bs-target="#cestaModal">
                     <i class="bi bi-cart-fill" style="font-size: 1.2rem;"></i>
