@@ -1,8 +1,8 @@
 {% extends 'masterIndex.html' %} {% block contenido %}
 {% load custom_template_tags %}
 
-<strong style="font-size: 3vw;">Alquiler</strong>
-<p style="font-size: 3vw;">de maquinaria de construcción</p>
+<strong class="fs-1" >Alquiler</strong>
+<p class="fs-1">de maquinaria de construcción</p>
 <form class="d-flex" role="search" action="" method="post">
     {% csrf_token %}
     {{formulario}}
