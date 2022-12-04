@@ -12,6 +12,63 @@
       input[type="number"]::-webkit-outer-spin-button {  
           opacity: 1;
       }
+
+      @media screen and (max-width: 768px) {
+        .navbar-nav {
+          font-size: 18px;
+        }
+
+        .navbar-nav > form > input  {
+          font-size: 18px;
+          width: auto;
+        }
+
+        .navbar-nav > form > button {
+          font-size: 18px;
+        }
+
+        .navbar-nav > li > button {
+          font-size: 18px;
+        }
+      }
+
+      @media screen and (max-width: 576px) {
+        .navbar-nav {
+          font-size: 12px;
+        }
+
+        .navbar-nav > form > input  {
+          font-size: 10px;
+          width: 75%;
+        }
+
+        .navbar-nav > form > button {
+          font-size: 10px;
+        }
+
+        .navbar-nav > li > button {
+          font-size: 12px;
+        }
+      }
+
+      @media screen and (max-width: 375px) {
+        .navbar-nav {
+          font-size: 13px;
+        }
+
+        .navbar-nav > form > input  {
+          font-size: 8px;
+          width: 75%;
+        }
+
+        .navbar-nav > form > button {
+          font-size: 8px;
+        }
+
+        .navbar-nav > li > button {
+          font-size: 10px;
+        }
+      }
     </style>
     <link rel="icon" href="../../media/tractor.png" type="image/png" />
     <link
@@ -40,9 +97,9 @@
           </a>
           <div class="position-absolute top-0 end-0">
             <ul class="flex-row navbar-nav mb-2 mb-lg-0 d-flex">
-                <li class="nav-item mx-2">
+                <!-- <li class="nav-item mx-2">
                   <a class="nav-link active" aria-current="page" href="/">Inicio</a>
-                </li>
+                </li> -->
                 <form class="d-flex mx-2" role="search" action="" method="post">
                   {% csrf_token %}
                   {{formulario}}
