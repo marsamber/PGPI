@@ -12,6 +12,90 @@
       input[type="number"]::-webkit-outer-spin-button {  
           opacity: 1;
       }
+      #resumenPedidoMovil {
+        display: none;
+      }
+
+      @media screen and (max-width: 768px) {
+        .navbar-nav {
+          font-size: 18px;
+        }
+
+        .navbar-nav > form > input  {
+          font-size: 18px;
+          width: auto;
+        }
+
+        .navbar-nav > form > button {
+          font-size: 18px;
+        }
+
+        .navbar-nav > li > button {
+          font-size: 18px;
+        }
+
+        #resumenPedidoPC {
+          display: none;
+        }
+
+        #resumenPedidoMovil {
+          display: block;
+        }
+      }
+
+      @media screen and (max-width: 576px) {
+        .navbar-nav {
+          font-size: 12px;
+        }
+
+        .navbar-nav > form > input  {
+          font-size: 10px;
+          width: 75%;
+        }
+
+        .navbar-nav > form > button {
+          font-size: 10px;
+        }
+
+        .navbar-nav > li > button {
+          font-size: 12px;
+        }
+
+        #resumenPedidoPC {
+          display: none;
+        }
+
+        #resumenPedidoMovil {
+          display: block;
+        }
+      }
+
+      @media screen and (max-width: 375px) {
+        .navbar-nav {
+          font-size: 13px;
+        }
+
+        .navbar-nav > form > input  {
+          font-size: 8px;
+          width: 75%;
+        }
+
+        .navbar-nav > form > button {
+          font-size: 8px;
+        }
+
+        .navbar-nav > li > button {
+          font-size: 10px;
+        }
+
+        #resumenPedidoPC {
+          display: none;
+        }
+
+        #resumenPedidoMovil {
+          display: block;
+        }
+      }
     </style>
     <link rel="icon" href="../../media/tractor.png" type="image/png" />
     <link
@@ -35,14 +119,19 @@
             <button class="navbar-toggler position-absolute top-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
               <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button> -->
           <a class="navbar-brand position-absolute top-0 start-50 translate-middle-x" href="/">
             <img src="../../media/logo.png" alt="Rent a Tractor" width="250vh" >
           </a>
-          <div class="position-absolute top-0 end-0">
+          <div class="position-absolute top-0 end-0 ">
+          <!-- collapse navbar-collapse" id="navbarSupportedContent -->
+          
             <ul class="flex-row navbar-nav mb-2 mb-lg-0 d-flex">
-                <li class="nav-item mx-2">
+                <!-- <li class="nav-item mx-2">
                   <a class="nav-link active" aria-current="page" href="/">Inicio</a>
-                </li>
+                </li> -->
                 <form class="d-flex mx-2" role="search" method="post" action="">
                     {% csrf_token %}
                     {{formulario}}
@@ -62,7 +151,7 @@
                 {% endif %}
                 <li class="nav-item mx-2">
                   <button type="button" class="position-relative btn border-0" data-bs-toggle="modal" data-bs-target="#cestaModal">
-                    <i class="bi bi-cart-fill" style="font-size: 1.2rem;"></i>
+                    <i class="bi bi-cart-fill"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                       {{cesta|length}}
                       <span class="visually-hidden">Cesta de la compra</span>

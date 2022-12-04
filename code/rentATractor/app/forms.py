@@ -4,8 +4,9 @@ from .models import Maquina, Pedido
 
 
 class SearchForm(forms.Form):
+
     search = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Nombre del producto"}), label=False,
+        widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Busca productos"}), label=False,
         required=False)
 
 
