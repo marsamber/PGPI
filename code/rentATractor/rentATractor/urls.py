@@ -37,6 +37,7 @@ urlpatterns = [
     path('cancelar/', views.cancelar),
     path('miCuenta/', views.miCuenta),
     path('favoritos/', views.favoritos),
+    path('favoritos/<int:id>', views.addFavorito),
     path('misPedidos/', views.misPedidos),
     path('sobreNosotros/', views.sobreNosotros),
     path('contacto/', views.contacto),
