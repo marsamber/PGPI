@@ -11,12 +11,13 @@ from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
-
+from django.contrib.auth.models import User
 from app.forms import OrderForm, SearchForm, LoginForm
 from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, Pedido
 import stripe
-from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm
-from .models import Maquina, Opinion, Pedido, Reclamacion
+from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm, \
+    RegisterForm
+from .models import Maquina, Opinion, Pedido, Reclamacion, Cliente
 from django.contrib.auth import authenticate, login as log, logout as django_logout
 
 
@@ -62,7 +63,7 @@ def login(request):
 def logout(request):
     # if request.method == 'POST':
     django_logout(request)
-    return index(request)
+    return redirect('/')
 
 
 def autenticar(request):
@@ -76,23 +77,41 @@ def autenticar(request):
         user = authenticate(request, username=user_name, password=password)
         if user is not None:
             log(request, user)
-            return index(request)
+            return redirect('/')
         else:
             cesta = EnCesta.objects.filter(cliente__id=1)
-            return render(request, "login_error.html", {'cesta': cesta, 'formulario': formulario,
-                                                        'STATIC_URL': settings.STATIC_URL})
+    return render(request, "login_error.html", {'cesta': cesta, 'formulario': formulario,
+                                                'STATIC_URL': settings.STATIC_URL})
 
 
 def register(request):
     formulario = SearchForm(initial={'search': None})
-
+    register_form = RegisterForm()
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
+        register_form = RegisterForm(request.POST)
         if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-
-    return render(request, 'register.html', {'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+        if register_form.is_valid() and register_form.has_changed():
+            try:
+                cliente = Cliente.objects.get(dni=register_form.cleaned_data['dni'])
+                print(cliente)
+            except ObjectDoesNotExist:
+                cliente = Cliente(nombre=register_form.cleaned_data['nombre'],
+                                  apellidos=register_form.cleaned_data['apellidos'],
+                                  dni=register_form.cleaned_data['dni'],
+                                  fecha_nacimiento=register_form.cleaned_data['fecha_nacimiento'],
+                                  correo=register_form.cleaned_data['email'])
+                cliente.save()
+            user = User(username=register_form.cleaned_data['usuario'], password=register_form.cleaned_data['password'])
+            user.save()
+            cliente_registrado = ClienteRegistrado(user=user, cliente=cliente,
+                                                   direccion=register_form.cleaned_data['direccion'])
+            cliente_registrado.save()
+            return redirect('/')
+    return render(request, 'register.html',
+                  {'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'register_form': register_form})
 
 
 def catalogo(request, categoria):
@@ -118,30 +137,40 @@ def catalogo(request, categoria):
             orden = request.POST.get('order')
             if orden == 'name asc':
                 if search:
-                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('nombre')
+                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(
+                        Maquina.objects.filter(marca__icontains=search)).__or__(
+                        Maquina.objects.filter(fabricante__icontains=search)).order_by('nombre')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('nombre')
             elif orden == 'name desc':
                 if search:
-                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('-nombre')
+                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(
+                        Maquina.objects.filter(marca__icontains=search)).__or__(
+                        Maquina.objects.filter(fabricante__icontains=search)).order_by('-nombre')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-nombre')
                 print(productos)
             elif orden == 'price asc':
                 if search:
-                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('precio')
+                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(
+                        Maquina.objects.filter(marca__icontains=search)).__or__(
+                        Maquina.objects.filter(fabricante__icontains=search)).order_by('precio')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('precio')
                 print(productos)
             elif orden == 'price desc':
                 if search:
-                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search)).order_by('-precio')
+                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(
+                        Maquina.objects.filter(marca__icontains=search)).__or__(
+                        Maquina.objects.filter(fabricante__icontains=search)).order_by('-precio')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-precio')
                 print(productos)
             elif orden == 'ordenar':
                 if search:
-                    productos =  Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search))
+                    productos = Maquina.objects.filter(nombre__icontains=search).__or__(
+                        Maquina.objects.filter(marca__icontains=search)).__or__(
+                        Maquina.objects.filter(fabricante__icontains=search))
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
 
@@ -151,7 +180,9 @@ def catalogo(request, categoria):
     elif not search and orden == "":
         productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
     elif search and orden == "":
-        productos = Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search))
+        productos = Maquina.objects.filter(nombre__icontains=search).__or__(
+            Maquina.objects.filter(marca__icontains=search)).__or__(
+            Maquina.objects.filter(fabricante__icontains=search))
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
@@ -390,6 +421,7 @@ def favoritos(request):
                   {'productos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
                    'cliente': cliente})
 
+
 def addFavorito(request, id):
     producto = Maquina.objects.get(id=id)
     cliente = ClienteRegistrado.objects.get(user=request.user.id)
@@ -589,7 +621,8 @@ def opinion(request, pedido):
             print(pedido)
             opinion.pedido = Pedido.objects.get(id=idPedido)
             idMaquina = form.cleaned_data['machine']
-            if not Opinion.objects.filter(pedido=Pedido.objects.get(id=idPedido), maquina=Maquina.objects.get(id=idMaquina)).exists():
+            if not Opinion.objects.filter(pedido=Pedido.objects.get(id=idPedido),
+                                          maquina=Maquina.objects.get(id=idMaquina)).exists():
                 if Pedido.objects.filter(maquina=Maquina.objects.get(id=idMaquina)).exists():
                     opinion.maquina = Maquina.objects.get(id=idMaquina)
                     opinion.cuerpo = form.cleaned_data['message']
