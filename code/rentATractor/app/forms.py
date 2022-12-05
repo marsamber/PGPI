@@ -62,7 +62,7 @@ class ComplaintForm(forms.Form):
 
 class OpinionForm(forms.Form):
     machine = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de máquina", required=True)
+        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de referencia del producto", required=True)
     message = forms.CharField(widget=forms.Textarea(
         attrs={"class": "form-control me-2", "placeholder": "Escribe tu opinión"}), label="Mensaje", required=True)
 
