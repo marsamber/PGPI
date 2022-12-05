@@ -46,7 +46,7 @@
                                 {% endif %}
                             </span>
                         </span>
-                        <a role="button" onclick="alert('Añadido a favoritos')">
+                        <a role="button" onclick="alert('Añadido a favoritos')" href="/favoritos/{{ producto.id }}">
                             {% if producto in favoritos %}
                             <i class="bi bi-bookmark-fill"></i>
                             {% else %}

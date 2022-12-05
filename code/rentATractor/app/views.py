@@ -371,7 +371,7 @@ def miCuenta(request):
 
 
 def favoritos(request):
-    favoritos = ClienteRegistrado.objects.get(cliente__id=1).gusta.all()
+    favoritos = ClienteRegistrado.objects.get(user=request.user.id).gusta.all()
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
@@ -389,6 +389,17 @@ def favoritos(request):
     return render(request, 'favoritos.html',
                   {'productos': favoritos, 'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
                    'cliente': cliente})
+
+def addFavorito(request, id):
+    producto = Maquina.objects.get(id=id)
+    cliente = ClienteRegistrado.objects.get(user=request.user.id)
+    if producto in cliente.gusta.all():
+        cliente.gusta.remove(producto)
+        cliente.save()
+    else:
+        cliente.gusta.add(producto)
+        cliente.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def misPedidos(request):
