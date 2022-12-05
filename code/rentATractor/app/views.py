@@ -152,7 +152,7 @@ def catalogo(request, categoria):
         productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina)
     elif search and orden == "":
         productos = Maquina.objects.filter(nombre__icontains=search).__or__(Maquina.objects.filter(marca__icontains=search)).__or__(Maquina.objects.filter(fabricante__icontains=search))
-     try:
+    try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
         cliente = None
@@ -392,7 +392,9 @@ def favoritos(request):
 
 
 def misPedidos(request):
-    pedidos = Pedido.objects.filter(cliente__id=1)
+    clienteregistrado = ClienteRegistrado.objects.get(user=request.user.id)
+    cliente = clienteregistrado.cliente
+    pedidos = Pedido.objects.filter(cliente__id=cliente.id)
 
     cesta = EnCesta.objects.filter(cliente__id=1)
 
@@ -576,11 +578,14 @@ def opinion(request, pedido):
             print(pedido)
             opinion.pedido = Pedido.objects.get(id=idPedido)
             idMaquina = form.cleaned_data['machine']
-            if Pedido.objects.filter(maquina=Maquina.objects.get(id=idMaquina)).exists():
-                opinion.maquina = Maquina.objects.get(id=idMaquina)
-                opinion.cuerpo = form.cleaned_data['message']
-                opinion.save()
-                return redirect('/opinion/' + str(pedido) + '?submitted=True')
+            if not Opinion.objects.filter(pedido=Pedido.objects.get(id=idPedido), maquina=Maquina.objects.get(id=idMaquina)).exists():
+                if Pedido.objects.filter(maquina=Maquina.objects.get(id=idMaquina)).exists():
+                    opinion.maquina = Maquina.objects.get(id=idMaquina)
+                    opinion.cuerpo = form.cleaned_data['message']
+                    opinion.save()
+                    return redirect('/opinion/' + str(pedido) + '?submitted=True')
+                else:
+                    form._errors['machine'] = form.add_error('machine', '')
             else:
                 form._errors['machine'] = form.add_error('machine', '')
 

@@ -27,6 +27,7 @@
                           {{pedido.estado_pedido}}</h5>
                         <h5 class="card-title">{{pedido.fecha_pedido}}</h5>
                         <p class="card-text">{{producto.nombre}}</p>
+                        <p class="card-text">Ref: {{producto.id}}</p>
                         <strong class="card-text">
                           {% if producto.descuento != 0 %}
                           {{producto.precio|subtract:producto.descuento}}
@@ -34,7 +35,9 @@
                           {{producto.precio}}
                           {% endif %} €</strong> <br/>
                         <a href="/confirmacion/{{pedido.id}}" class="text-black">Ver pedido</a> <br/>
-                        {% if pedido.estado_pedido == 'Enviado' or pedido.estado_pedido == 'Entregado' %}<a href="#" class="btn btn-light w-100 mt-2">Añadir opinión</a> {% endif %}
+                        {% if pedido.estado_pedido == 'Recogido' %}
+                          <a href="/opinion/{{pedido.id}}" class="btn btn-light w-100 mt-2">Añadir opinión</a> 
+                        {% endif %}
                       </div>
                     </div>
                   </div>
