@@ -480,7 +480,7 @@ def contacto(request):
         cliente = None
     return render(request, 'contacto.html',
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
-                   'cliente': cliente})
+                   'cliente': cliente, 'submitted': submitted})
 
 
 def atencionCliente(request):
@@ -650,6 +650,23 @@ def politicaPrivacidad(request):
     except ObjectDoesNotExist:
         cliente = None
     return render(request, 'politicaPrivacidad.html',
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
+def politicaEnvio(request):
+    cesta = EnCesta.objects.filter(cliente__id=1)
+
+    formulario = SearchForm(initial={'search': None})
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid() and formulario.has_changed():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, 'politicaEnvio.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
