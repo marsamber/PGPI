@@ -88,3 +88,6 @@ class Step1Form(forms.Form):
         attrs={"class": "form-control me-2", "placeholder": "Nombre del país"}), label="País", required=True)
     phone = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="País", required=True)
+
+class SeguimientoPedidoForm(forms.Form):
+    idPedido = forms.IntegerField(widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Introduzca el número de su pedido"}), label=False, required=True)
