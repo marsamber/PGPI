@@ -44,6 +44,7 @@ urlpatterns = [
     path('atencionCliente/', views.atencionCliente),
     path('seguimientoPedidos/', views.seguimientoPedidos),
     path('politicaDevolucion/', views.politicaDevolucion),
+    path('politicaEnvio/', views.politicaEnvio),
     path('reclamaciones/', views.reclamaciones),
     path('opinion/<int:pedido>', views.opinion),
     path('terminosCondicionesUso/', views.terminosCondicionesUso),

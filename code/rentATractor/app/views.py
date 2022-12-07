@@ -15,7 +15,7 @@ from django.contrib import messages
 from app.forms import OrderForm, SearchForm, LoginForm
 from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, Pedido
 import stripe
-from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm
+from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm, SeguimientoPedidoForm
 from .models import Maquina, Opinion, Pedido, Reclamacion
 from django.contrib.auth import authenticate, login as log, logout as django_logout
 
@@ -480,7 +480,7 @@ def contacto(request):
         cliente = None
     return render(request, 'contacto.html',
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
-                   'cliente': cliente})
+                   'cliente': cliente, 'submitted': submitted})
 
 
 def atencionCliente(request):
@@ -506,17 +506,28 @@ def seguimientoPedidos(request):
 
     formulario = SearchForm(initial={'search': None})
 
+    form = SeguimientoPedidoForm(initial={'idPedido': None})
+
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
+        form = SeguimientoPedidoForm(request.POST)
+
         if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
+        
+        if form.is_valid() and form.has_changed():
+            idPedido = form.cleaned_data['idPedido']
+            if Pedido.objects.filter(id=idPedido).exists():
+                return redirect('/confirmacion/' + str(idPedido))
+            else:
+                form._errors['idPedido'] = form.add_error('idPedido', '')
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
         cliente = None
     return render(request, 'seguimientoPedidos.html',
-                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+                  {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
 def politicaDevolucion(request):
@@ -650,6 +661,23 @@ def politicaPrivacidad(request):
     except ObjectDoesNotExist:
         cliente = None
     return render(request, 'politicaPrivacidad.html',
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
+def politicaEnvio(request):
+    cesta = EnCesta.objects.filter(cliente__id=1)
+
+    formulario = SearchForm(initial={'search': None})
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid() and formulario.has_changed():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, 'politicaEnvio.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 

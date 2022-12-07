@@ -1,0 +1,40 @@
+{% extends 'master.html' %} {% block contenido %}
+<div>
+  <h1 class="text-center m-2">Política de envío</h1>
+  <p>
+    Las opciones de envío pueden variar en función de la dirección de entrega, 
+    la hora de tu compra y la disponibilidad de los artículos.
+  </p>
+  <p><strong>
+    En el momento de procesar tu compra, te mostraremos los métodos de envío disponibles, 
+    el coste y la fecha de entrega de tu pedido.
+  </strong></p>
+  <p>
+    Posibles opciones de entrega:
+  </p>
+  <ol class="list-group-numbered" >
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Recogida en tienda - GRATUITO</div>
+        <p>
+          En la tienda de Sevilla en 2-3 días laborables.
+        </p>
+        <p>
+          Recuerda que la persona que acude a recoger el pedido solo necesita presentar el ticket electrónico siempre y cuando sea el comprador. Si acude otra persona en tu lugar, deberá presentar también su documento identificativo.
+        </p>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start" >
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Entrega a domicilio </div>
+        <strong>
+          Entrega estándar - 50 EUR / GRATUITO PARA PEDIDOS A PARTIR DE 499 EUR (aplica solo a artículos sin descuento).
+        </strong> 
+        <p>
+          El plazo estimado de entrega será de aproximadamente 1 semana, dependiendo de la dirección de entrega.
+        </p>
+        </div>
+    </li>
+  </ol>
+  <p>Ten en cuenta que las entregas se realizan sólo en días laborables y dentro de la península.</p>
+{% endblock %}
