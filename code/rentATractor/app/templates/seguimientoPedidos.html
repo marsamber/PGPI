@@ -2,6 +2,11 @@
 <div class="text-center">
   <h1 class="text-center">Seguimiento de pedidos</h1>
   <p>Aquí podrá hacer saber en todo momento el estado de su pedido.</p>
+{% if form.errors %}
+<p class="alert alert-danger" role="alert" >
+  El número de pedido introducido no corresponde con ningun pedido realizado.
+  </p>
+{% endif %}
   <form class="d-flex mx-2" role="idPedido" method="post" action="">
                     {% csrf_token %}
                     {{form}}
@@ -9,4 +14,3 @@
                 </form>
 </div>
 {% endblock %}
-s

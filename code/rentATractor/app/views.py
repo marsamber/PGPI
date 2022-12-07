@@ -518,7 +518,10 @@ def seguimientoPedidos(request):
         
         if form.is_valid() and form.has_changed():
             idPedido = form.cleaned_data['idPedido']
-            return redirect('/confirmacion/' + str(idPedido))
+            if Pedido.objects.filter(id=idPedido).exists():
+                return redirect('/confirmacion/' + str(idPedido))
+            else:
+                form._errors['idPedido'] = form.add_error('idPedido', '')
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
