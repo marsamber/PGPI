@@ -32,13 +32,16 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'www.enprava.pythonanywhere.com', 'en
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
+    'app.apps.AppConfig',
+    'admin_interface',
+    'colorfield',
+    'django.contrib.admin'
+
 ]
 
 MIDDLEWARE = [
@@ -54,6 +57,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'rentATractor.urls'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 TEMPLATES = [
     {
