@@ -4,7 +4,6 @@ from .models import Maquina, Pedido
 
 
 class SearchForm(forms.Form):
-
     search = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Busca productos"}), label=False,
         required=False)
@@ -26,15 +25,29 @@ class OrderForm(forms.Form):
                               required=False)
 
 
+class RegisterForm(forms.Form):
+    template_name = 'register_snippet.html'
+    nombre = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Nombre')
+    apellidos = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Apellidos')
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
+    dni = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='DNI')
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': "form-control"}),
+                                       label='Fecha de nacimiento')
+    usuario = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Nombre de usuario')
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': "form-control"}), label='Contraseña')
+    direccion = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Dirección')
+
+
 class MiCuentaForm(forms.Form):
     template_name = 'micuenta_snippet.html'
     nombre = forms.CharField(widget=(forms.TextInput(attrs={'class': "form-control"})), label='Nombre')
     apellidos = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Apellidos')
-    email = forms.CharField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
     dni = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='DNI')
     fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': "form-control"}),
                                        label='Fecha de nacimiento')
-    direccion = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Dirección', required=False)
+    direccion = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Dirección',
+                                required=False)
 
 
 class ContactForm(forms.Form):
@@ -62,7 +75,8 @@ class ComplaintForm(forms.Form):
 
 class OpinionForm(forms.Form):
     machine = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de referencia del producto", required=True)
+        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de referencia del producto",
+        required=True)
     message = forms.CharField(widget=forms.Textarea(
         attrs={"class": "form-control me-2", "placeholder": "Escribe tu opinión"}), label="Mensaje", required=True)
 
