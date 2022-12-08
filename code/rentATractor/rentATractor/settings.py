@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-er*(g7(0n8!mk5&zz6u+z)_cn(2o3z6v3)^c(jp9zn8$ui(atv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'www.enprava.pythonanywhere.com', 'enprava.pythonanywhere.com']
 
@@ -32,13 +32,16 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'www.enprava.pythonanywhere.com', 'en
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
+    'app.apps.AppConfig',
+    'admin_interface',
+    'colorfield',
+    'django.contrib.admin'
+
 ]
 
 MIDDLEWARE = [
@@ -54,6 +57,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'rentATractor.urls'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 TEMPLATES = [
     {
