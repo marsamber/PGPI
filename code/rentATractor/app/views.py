@@ -104,9 +104,9 @@ def register(request):
                                   fecha_nacimiento=register_form.cleaned_data['fecha_nacimiento'],
                                   correo=register_form.cleaned_data['email'])
                 cliente.save()
-            # user = User(username=register_form.cleaned_data['usuario'], password=register_form.cleaned_data['password'])
-            User.objects.create_user(register_form.cleaned_data['usuario'],register_form.cleaned_data['email'],register_form.cleaned_data['password'])
-            # user.save()
+            
+            user = User.objects.create_user(register_form.cleaned_data['usuario'],register_form.cleaned_data['email'],register_form.cleaned_data['password'])
+            cliente = Cliente.objects.get(dni=cliente.dni)
             cliente_registrado = ClienteRegistrado(user=user, cliente=cliente,
                                                    direccion=register_form.cleaned_data['direccion'])
             cliente_registrado.save()
