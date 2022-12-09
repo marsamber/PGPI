@@ -16,7 +16,7 @@ from app.forms import OrderForm, SearchForm, LoginForm
 from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, Pedido
 import stripe
 from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm, SeguimientoPedidoForm
-from .models import Maquina, Opinion, Pedido, Reclamacion
+from .models import Cliente, Maquina, Opinion, Pedido, Reclamacion
 from django.contrib.auth import authenticate, login as log, logout as django_logout
 
 
@@ -218,6 +218,50 @@ def cesta(request):
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'favoritos': favoritos,
                    'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
+def addCesta(request, id):
+    try:
+        producto = Maquina.objects.get(pk=id)
+        try:
+            cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        except ObjectDoesNotExist:
+            device = request.COOKIES['device']
+            try:
+                cliente = Cliente.objects.get(nombre=device)
+            except ObjectDoesNotExist:
+                cliente = Cliente.objects.create(nombre=device)
+        if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+            enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+            enCesta.cantidad = enCesta.cantidad + 1
+            enCesta.save()
+        else:
+            EnCesta.objects.create(cliente=cliente, maquina=producto, cantidad=1)
+    except:
+        pass
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+
+# def removeCesta(request, id):
+#     producto = Maquina.objects.get(pk=id)
+#     cliente = Cliente.objects.get(id=request.user.id)
+#     print(cliente)
+#     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+#         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+#         print(enCesta)
+#         enCesta.cantidad = 0
+#         enCesta.delete()
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+# def updateCesta(request, id, cantidad):
+#     producto = Maquina.objects.get(id=id)
+#     cliente = Cliente.objects.get(id=request.user.id)
+#     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+#         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+#         print(enCesta)
+#         if cantidad == '0':
+#             enCesta.delete()
+#         else:
+#             enCesta.cantidad = cantidad
+#             enCesta.save()
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def domicilioPago(request):
     precioTotal = 0
