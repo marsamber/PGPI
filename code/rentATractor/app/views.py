@@ -224,7 +224,7 @@ def cesta(request):
         try:
             cliente = Cliente.objects.get(nombre=device)
             favoritos = None
-            cesta = EnCesta.objects.filter(cliente_nombre=device)
+            cesta = EnCesta.objects.filter(cliente__nombre=device)
         except ObjectDoesNotExist:
             cliente = None
             favoritos = None
@@ -247,10 +247,10 @@ def addCesta(request, id):
             except ObjectDoesNotExist:
                 print("A ver si puede crear el cliente:\ndevice: " + device)
                 clienteDevice = Cliente(nombre=device)
+                print(clienteDevice)
                 clienteDevice.save()
                 cliente = Cliente.objects.get(nombre=device)
-                #cliente = Cliente.objects.filter(nombre=device).first()
-                print(cliente)
+
         if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
             enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
             enCesta.cantidad = enCesta.cantidad + 1
