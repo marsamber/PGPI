@@ -80,7 +80,7 @@ def autenticar(request):
         user = authenticate(request, username=user_name, password=password)
         if user is not None:
             log(request, user)
-            return index(request)
+            return redirect('/')
         else:
             cesta = EnCesta.objects.filter(cliente__id=1)
             return render(request, "login_error.html", {'cesta': cesta, 'formulario': formulario,
