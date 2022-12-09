@@ -45,7 +45,7 @@ urlpatterns = [
     path('seguimientoPedidos/', views.seguimientoPedidos),
     path('politicaDevolucion/', views.politicaDevolucion),
     path('politicaEnvio/', views.politicaEnvio),
-    path('reclamaciones/', views.reclamaciones),
+    path('reclamacion/<int:pedido>', views.reclamacion),
     path('opinion/<int:pedido>', views.opinion),
     path('terminosCondicionesUso/', views.terminosCondicionesUso),
     path('politicaPrivacidad/', views.politicaPrivacidad),

@@ -1,15 +1,15 @@
 {% extends 'master.html' %} {% block contenido %}
 
 <div>
-  <h1 class="text-center">Valora el producto</h1>
+  <h1 class="text-center">Escribe tu problema</h1>
   {% if submitted %}
   <p class="alert alert-success" role="alert" >
-    Su opinión se ha publicado con éxito. Gracias!
+    Su reclamación se ha enviado con éxito. En breve nos pondremos en contacto con usted.
   </p>
   {% else %}
   {% if form.errors %}
 <p class="alert alert-danger" role="alert" >
-  El número de referencia de producto introducido no corresponde con ninguna máquina de su pedido o ya existe una opinión para este producto.
+  El número de referencia de producto introducido no corresponde con ninguna máquina de su pedido o ya existe una reclamación para este producto.
   </p>
 {% endif %}
 

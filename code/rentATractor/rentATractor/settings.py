@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-er*(g7(0n8!mk5&zz6u+z)_cn(2o3z6v3)^c(jp9zn8$ui(atv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'www.enprava.pythonanywhere.com', 'enprava.pythonanywhere.com']
 
@@ -55,7 +55,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'rentATractor.urls'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'rentatractorus@gmail.com'
+EMAIL_HOST_PASSWORD = 'odoindwguhddwxgt'
+EMAIL_PORT = 587
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
