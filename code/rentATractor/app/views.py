@@ -39,7 +39,7 @@ def index(request):
         favoritos = ClienteRegistrado.objects.get(cliente__id=cliente.id).gusta.all()
     except ObjectDoesNotExist:
         cliente = None
-
+        cesta = verCestaModal(request)
     return render(request, 'index.html',
                   {'cesta': cesta, 'productos': productos, 'favoritos': favoritos, 'formulario': formulario,
                    'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
@@ -161,6 +161,7 @@ def catalogo(request, categoria):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'catalogo.html',
                   {'categoria': categoria, 'productos': productos, 'favoritos': favoritos, 'cesta': cesta,
                    'formulario': formulario, 'formularioOrdenacion': formularioOrdenacion, 'orden': orden,
@@ -186,10 +187,24 @@ def producto(request, id):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'producto.html',
                   {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'cesta': cesta,
                    'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
+def verCestaModal(request):
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+    except ObjectDoesNotExist:
+        try:
+            device = request.COOKIES['device']
+            cliente = Cliente.objects.get(nombre=device)
+            favoritos = None
+            cesta = EnCesta.objects.filter(cliente__nombre=device)
+        except:
+            cesta = None
+    return cesta
 
 def cesta(request):
     precioTotal = 0
@@ -208,17 +223,10 @@ def cesta(request):
         if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
-    # try:
-    #     cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
-    #     favoritos = ClienteRegistrado.objects.get(cliente__id=cliente.id).gusta.all()
-    #     cesta = EnCesta.objects.filter(cliente__id=cliente.id)
-    # except ObjectDoesNotExist:
-    #     cliente = None
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         favoritos = ClienteRegistrado.objects.get(cliente__id=cliente.id).gusta.all()
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
-        print("Try de cesta")
     except ObjectDoesNotExist:
         device = request.COOKIES['device']
         try:
@@ -229,8 +237,6 @@ def cesta(request):
             cliente = None
             favoritos = None
             cesta = None
-            print("No se ha encontrado el cliente del device")
-        print("No se ha encontrado un cliente")
     return render(request, 'cesta.html',
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'favoritos': favoritos,
                    'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
@@ -245,9 +251,7 @@ def addCesta(request, id):
             try:
                 cliente = Cliente.objects.get(nombre=device)
             except ObjectDoesNotExist:
-                print("A ver si puede crear el cliente:\ndevice: " + device)
                 clienteDevice = Cliente(nombre=device)
-                print(clienteDevice)
                 clienteDevice.save()
                 cliente = Cliente.objects.get(nombre=device)
 
@@ -257,33 +261,53 @@ def addCesta(request, id):
             enCesta.save()
         else:
             EnCesta.objects.create(cliente=cliente, maquina=producto, cantidad=1)
+
     except:
         pass
     return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
 
-# def removeCesta(request, id):
-#     producto = Maquina.objects.get(pk=id)
-#     cliente = Cliente.objects.get(id=request.user.id)
-#     print(cliente)
-#     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
-#         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
-#         print(enCesta)
-#         enCesta.cantidad = 0
-#         enCesta.delete()
-#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+def removeCesta(request, id):
+    try:
+        producto = Maquina.objects.get(pk=id)
+        try:
+            cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        except ObjectDoesNotExist:
+            device = request.COOKIES['device']
+            cliente = Cliente.objects.get(nombre=device)
+        print(cliente, producto)
+        if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+            enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+            enCesta.cantidad = 0
+            enCesta.delete()
+        else:
+            pass
 
-# def updateCesta(request, id, cantidad):
-#     producto = Maquina.objects.get(id=id)
-#     cliente = Cliente.objects.get(id=request.user.id)
-#     if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
-#         enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
-#         print(enCesta)
-#         if cantidad == '0':
-#             enCesta.delete()
-#         else:
-#             enCesta.cantidad = cantidad
-#             enCesta.save()
-#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    except Exception as e:
+        raise e
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def updateCesta(request, id, cantidad):
+    try:
+        producto = Maquina.objects.get(pk=id)
+        try:
+            cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        except ObjectDoesNotExist:
+            device = request.COOKIES['device']
+            cliente = Cliente.objects.get(nombre=device)
+        print(cliente, producto)
+        if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
+            enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
+            if cantidad == '0':
+                enCesta.delete()
+            else:
+                enCesta.cantidad = cantidad
+                enCesta.save()
+        else:
+            pass
+
+    except Exception as e:
+        raise e
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def domicilioPago(request):
     precioTotal = 0
@@ -307,6 +331,7 @@ def domicilioPago(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'domicilioPago.html', {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario,
                                                   'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -335,6 +360,7 @@ def datosPago(request):
         pedido = Pedido.objects.filter(cliente__id=1).last()
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'datosPago.html',
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'pedido': pedido, 'cesta': cesta,
                    'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
@@ -355,6 +381,7 @@ def pago(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'pago.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -404,6 +431,7 @@ def confirmacion(request, id):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal,
                                                  'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta,
                                                  'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
@@ -417,6 +445,7 @@ def cancelar(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'cancelar.html', {'cesta': cesta, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
@@ -526,6 +555,7 @@ def sobreNosotros(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'sobreNosotros.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -566,6 +596,7 @@ def contacto(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'contacto.html',
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
                    'cliente': cliente, 'submitted': submitted})
@@ -586,6 +617,7 @@ def atencionCliente(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'atencionCliente.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -616,6 +648,7 @@ def seguimientoPedidos(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'seguimientoPedidos.html',
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -635,6 +668,7 @@ def politicaDevolucion(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'politicaDevolucion.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -674,6 +708,7 @@ def reclamaciones(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'reclamaciones.html',
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
                    'submitted': submitted, 'cliente': cliente})
@@ -715,6 +750,7 @@ def opinion(request, pedido):
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'opinion.html',
                   {'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL, 'submitted': submitted,
                    'cliente': cliente})
@@ -735,6 +771,7 @@ def terminosCondicionesUso(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'terminosCondicionesUso.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -754,6 +791,7 @@ def politicaPrivacidad(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'politicaPrivacidad.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -772,6 +810,7 @@ def politicaEnvio(request):
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, 'politicaEnvio.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
@@ -781,6 +820,7 @@ def error404(request):
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, '404.html', {'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
@@ -789,6 +829,7 @@ def error500(request):
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
     except ObjectDoesNotExist:
         cliente = None
+        cesta = verCestaModal(request)
     return render(request, '500.html', {'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
