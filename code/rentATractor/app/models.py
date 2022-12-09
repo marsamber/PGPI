@@ -59,7 +59,7 @@ class ClienteRegistrado(models.Model):
     cliente = models.OneToOneField('Cliente', primary_key=True, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     direccion = models.CharField(max_length=256)
-    gusta = models.ManyToManyField('Maquina')
+    gusta = models.ManyToManyField('Maquina', blank=True)
 
 
 class Pedido(models.Model):
