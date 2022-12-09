@@ -47,12 +47,12 @@ class Maquina(models.Model):
 
 
 class Cliente(models.Model):
-    id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=64)
-    apellidos = models.CharField(max_length=64)
-    dni = models.CharField(max_length=32)
-    fecha_nacimiento = models.DateField()
-    correo = models.CharField(max_length=64)
+    id = models.IntegerField(primary_key=True, blank=True)
+    nombre = models.CharField(max_length=64,null=True)
+    apellidos = models.CharField(max_length=64,null=True)
+    dni = models.CharField(max_length=32,null=True)
+    fecha_nacimiento = models.DateField(null=True)
+    correo = models.CharField(max_length=64,null=True)
 
 
 class ClienteRegistrado(models.Model):

@@ -54,7 +54,10 @@
                         </a>
                         {% endif %}
                     </h5>
-                  <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <a href="/cesta/{{producto.id}}/">
+                        <button class="btn btn-light w-100" onclick="alert('Producto añadido al carrito')">Añadir a la cesta</button>
+                    </a>
                 </div>
               </div>
         </div>
