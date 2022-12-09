@@ -208,12 +208,29 @@ def cesta(request):
         if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    # try:
+    #     cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+    #     favoritos = ClienteRegistrado.objects.get(cliente__id=cliente.id).gusta.all()
+    #     cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+    # except ObjectDoesNotExist:
+    #     cliente = None
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         favoritos = ClienteRegistrado.objects.get(cliente__id=cliente.id).gusta.all()
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+        print("Try de cesta")
     except ObjectDoesNotExist:
-        cliente = None
+        device = request.COOKIES['device']
+        try:
+            cliente = Cliente.objects.get(nombre=device)
+            favoritos = None
+            cesta = EnCesta.objects.filter(cliente_nombre=device)
+        except ObjectDoesNotExist:
+            cliente = None
+            favoritos = None
+            cesta = None
+            print("No se ha encontrado el cliente del device")
+        print("No se ha encontrado un cliente")
     return render(request, 'cesta.html',
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'favoritos': favoritos,
                    'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
@@ -228,7 +245,12 @@ def addCesta(request, id):
             try:
                 cliente = Cliente.objects.get(nombre=device)
             except ObjectDoesNotExist:
-                cliente = Cliente.objects.create(nombre=device)
+                print("A ver si puede crear el cliente:\ndevice: " + device)
+                clienteDevice = Cliente(nombre=device)
+                clienteDevice.save()
+                cliente = Cliente.objects.get(nombre=device)
+                #cliente = Cliente.objects.filter(nombre=device).first()
+                print(cliente)
         if EnCesta.objects.filter(cliente=cliente, maquina=producto).exists():
             enCesta = EnCesta.objects.get(cliente=cliente, maquina=producto)
             enCesta.cantidad = enCesta.cantidad + 1
@@ -461,9 +483,9 @@ def addFavorito(request, id):
         else:
             clienteRegistrado.gusta.add(producto)
             clienteRegistrado.save()
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     except ObjectDoesNotExist:
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        pass
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def misPedidos(request):
