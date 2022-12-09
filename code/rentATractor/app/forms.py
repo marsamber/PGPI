@@ -82,26 +82,24 @@ class OpinionForm(forms.Form):
 
 
 class Step1Form(forms.Form):
+    template_name='domicilioPago_snippet.html'
     name = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Nombre"}), label="Nombre", required=True)
     surname = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Apellidos"}), label="Apellidos", required=True)
     address = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección", required=True)
-    number = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXX"}), label="Número", required=True)
-    cp = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXXX"}), label="Código Postal", required=True)
-    city = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre de la población"}), label="Población",
-        required=True)
-    province = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre de la provincia"}), label="Provincia",
-        required=True)
-    country = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre del país"}), label="País", required=True)
-    phone = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="País", required=True)
+    # phone = forms.CharField(widget=forms.TextInput(
+    #     attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="Teléfono", required=True)
+    dni = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="DNI", required=True)
+    fecha_nacimiento = forms.DateField(
+        widget=forms.DateInput(attrs={'class': "form-control me-2", 'placeholder': 'dd/mm/yyyy'}),
+        label='Fecha de nacimiento', required=True)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control me-2"}), label='Correo eléctronico')
+
 
 class SeguimientoPedidoForm(forms.Form):
-    idPedido = forms.IntegerField(widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Introduzca el número de su pedido"}), label=False, required=True)
+    idPedido = forms.IntegerField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Introduzca el número de su pedido"}), label=False,
+                                  required=True)
