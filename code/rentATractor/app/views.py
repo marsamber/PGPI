@@ -1,5 +1,8 @@
 from argparse import _get_action_name
 from distutils.command import clean
+from email.mime.image import MIMEImage
+from django.core.mail import EmailMultiAlternatives
+from pathlib import Path
 from pyexpat import model
 from pyexpat.errors import messages
 import socket
@@ -19,6 +22,8 @@ from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Fo
     RegisterForm, SeguimientoPedidoForm
 from .models import Maquina, Opinion, Pedido, Reclamacion, Cliente
 from django.contrib.auth import authenticate, login as log, logout as django_logout
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 # Create your views here.
@@ -360,20 +365,45 @@ def confirmacion(request, id):
 
     formulario = SearchForm(initial={'search': None})
 
+    enviado = False
+
     if request.method == 'POST':
+        
         formulario = SearchForm(request.POST)
         if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    else:
+        if 'enviado' in request.GET:
+            enviado = True
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+
+        subject = "Confirmación Rent a tractor"
+        user = pedido.cliente.correo
+
+        html_message = render_to_string('confirmacionCorreo.html', {'pedido': pedido, 'Content-ID': '<../../media/logo.png>'})
+        plain_message = strip_tags(html_message)
+
+        image_path = './media/logo.png'
+        image_name = Path(image_path).name
+
+        email = EmailMultiAlternatives(subject=subject, body=plain_message, from_email=user, to=['rentatractorus@gmail.com'])
+        with open(image_path, mode='rb') as f:
+            image = MIMEImage(f.read())
+            email.attach(image)
+            image.add_header('Content-ID', f"<{image_name}>")
+        email.send()
+        enviado = True
     except ObjectDoesNotExist:
         cliente = None
+    except BadHeaderError:
+            return HttpResponse('Invalid header found.')
     return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal,
                                                  'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta,
                                                  'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
-                                                 'cliente': cliente})
+                                                 'cliente': cliente, 'enviado': enviado})
 
 
 def cancelar(request):
@@ -749,6 +779,7 @@ def politicaEnvio(request):
         cliente = None
     return render(request, 'politicaEnvio.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 
 def error404(request):

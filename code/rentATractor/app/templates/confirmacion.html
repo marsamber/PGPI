@@ -1,6 +1,12 @@
 {% extends 'master.html' %} {% block contenido %}
 {% load custom_template_tags %}
 
+{% if enviado %}
+<p class="alert alert-success" role="alert" >
+  Su confirmación se ha enviado con éxito a {{ pedido.cliente.correo }}. Gracias!
+</p>
+{% endif %}
+
 <div class="text-center">
   <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
@@ -10,7 +16,18 @@
   <div class="col-md-8">
     <div class="row">
       <strong style="font-size: xx-large;">Confirmación de pedido</strong>
-      <p>Se ha enviado un correo a {{pedido.cliente.correo}} con la confirmación del pedido número {{pedido.id}}</p>
+      <p><strong>¡Gracias por realizar su pedido!</strong></p>
+
+      <p>¿Quiere que le enviemos un correo a {{ pedido.cliente.correo }} con la confirmación de su pedido <strong>{{ pedido.id }}</strong>?</p>
+      <form action="" method="POST" >
+        
+      {% csrf_token %}
+          {{form.as_p}}
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-warning ">Enviar confirmación</button>
+      </div>
+    </form>
+
     </div>
     <div class="row">
       <strong style="font-size: xx-large;">Seguimiento de pedido</strong>
