@@ -49,6 +49,7 @@ urlpatterns = [
     path('opinion/<int:pedido>', views.opinion),
     path('terminosCondicionesUso/', views.terminosCondicionesUso),
     path('politicaPrivacidad/', views.politicaPrivacidad),
+    path('condicionesAlquiler/', views.condicionesAlquiler),
     path('media/<path>', django.views.static.serve,
          {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

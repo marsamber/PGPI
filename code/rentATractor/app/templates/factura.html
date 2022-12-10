@@ -1,0 +1,65 @@
+{% extends 'master.html' %} {% block contenido %}
+<div>
+    <div class="row justify-content-center">
+        <a class="navbar-brand position-absolute top-0 start-50 translate-middle-x" href="/">
+            <img src="../../media/logo.png" alt="Rent a Tractor" width="250vh" >
+        </a>
+    </div>
+    <div class="row justify-content-center">
+        <p>RENT A TRACTOR</p>
+        <p>Av.Reina Mercedes, S/N</p>
+        <p>Sevilla, España</p>
+    </div>
+    <div class="row">
+        <p><strong>NÚMERO DE PEDIDO:</strong></p>
+        <p><strong>FECHA DE VENTA:</strong></p>
+        <p><strong>CLIENTE:</strong></p>
+        <p><strong>DNI:</strong></p>
+    </div>
+
+    <div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">MAQUINA</th>
+                <th scope="col">CANTIDAD</th>
+                <th scope="col">PRECIO</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for producto in pedido.maquina.all %}
+            <tr>
+                <th scope="row">{{producto.id}}</th>
+                <td>{{producto.nombre}}</td>
+                <td>
+                    {% for prodUnidades in contiene %}
+                        {% if prodUnidades.maquina.id == producto.id %}
+                            {{prodUnidades.cantidad}} 
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for prodUnidades in contiene %}
+                        {% if prodUnidades.maquina.id == producto.id %}
+                            {% if producto.descuento != 0 %}
+                            {{producto.precio|subtract:producto.descuento|multiply:prodUnidades.cantidad}}
+                            {% else %}
+                            {{producto.precio|multiply:prodUnidades.cantidad}}
+                            {% endif %} €
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="row">
+        <p><strong>SUBTOTAL:</strong></p>
+        <p><strong>IVA 21%:</strong></p>
+        <p><strong>GASTOS DE ENVÍO:</strong></p>
+        <p><strong>TOTAL:</strong></p>
+    </div>
+
+</div>

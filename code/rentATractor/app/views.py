@@ -355,7 +355,7 @@ def confirmacion(request, id):
     pedido = Pedido.objects.get(id=id)
     contiene = Contiene.objects.filter(pedido__id=id)
     precioTotal = 0
-
+    
     for c in contiene:
         precioTotal += (c.maquina.precio - c.maquina.descuento) * c.cantidad
 
@@ -363,23 +363,11 @@ def confirmacion(request, id):
 
     cesta = []
 
-    formulario = SearchForm(initial={'search': None})
-
     enviado = False
 
-    if request.method == 'POST':
-        
-        formulario = SearchForm(request.POST)
-        if formulario.is_valid() and formulario.has_changed():
-            request.session['search'] = formulario.cleaned_data['search']
-            return redirect('/catalogo/Resultados de: ' + request.session['search'])
-    else:
-        if 'enviado' in request.GET:
-            enviado = True
-    try:
-        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
-        cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+    formulario = SearchForm(initial={'search': None})
 
+    if request.method == 'POST':
         subject = "Confirmación Rent a tractor"
         user = pedido.cliente.correo
 
@@ -395,7 +383,19 @@ def confirmacion(request, id):
             email.attach(image)
             image.add_header('Content-ID', f"<{image_name}>")
         email.send()
+
         enviado = True
+
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid() and formulario.has_changed():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    else:
+        enviado = False
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+
     except ObjectDoesNotExist:
         cliente = None
     except BadHeaderError:
@@ -760,6 +760,24 @@ def politicaPrivacidad(request):
     except ObjectDoesNotExist:
         cliente = None
     return render(request, 'politicaPrivacidad.html',
+                  {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
+def condicionesAlquiler(request):
+    cesta = []
+
+    formulario = SearchForm(initial={'search': None})
+
+    if request.method == 'POST':
+        formulario = SearchForm(request.POST)
+        if formulario.is_valid() and formulario.has_changed():
+            request.session['search'] = formulario.cleaned_data['search']
+            return redirect('/catalogo/Resultados de: ' + request.session['search'])
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+    except ObjectDoesNotExist:
+        cliente = None
+    return render(request, 'condicionesAlquiler.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 def politicaEnvio(request):
