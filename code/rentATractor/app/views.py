@@ -24,7 +24,11 @@ from .models import Maquina, Opinion, Pedido, Reclamacion, Cliente
 from django.contrib.auth import authenticate, login as log, logout as django_logout
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
+from django.conf import settings
+from django.template.loader import get_template
+from weasyprint import HTML
+from django.http import FileResponse
+import os
 
 # Create your views here.
 def index(request):  
@@ -350,16 +354,23 @@ def payment_checkout(request):
 
     return redirect(session.url)
 
-
 def confirmacion(request, id):
     pedido = Pedido.objects.get(id=id)
     contiene = Contiene.objects.filter(pedido__id=id)
     precioTotal = 0
-    
+    gastoEnvio = 50
+
+    precioSubtotalEnvio = 0
+
     for c in contiene:
         precioTotal += (c.maquina.precio - c.maquina.descuento) * c.cantidad
+    
+    if precioTotal > 499:
+        gastoEnvio = 0
 
-    precioTotalEnvio = precioTotal + 50
+    precioTotalEnvio = precioTotal + gastoEnvio
+    iva = precioTotalEnvio * 0.21
+    precioSubtotalEnvio = precioTotalEnvio - iva
 
     cesta = []
 
@@ -368,23 +379,42 @@ def confirmacion(request, id):
     formulario = SearchForm(initial={'search': None})
 
     if request.method == 'POST':
-        subject = "Confirmación Rent a tractor"
-        user = pedido.cliente.correo
+        if 'enviar_correo' in request.POST:
+            subject = "Confirmación Rent a tractor"
+            user = pedido.cliente.correo
 
-        html_message = render_to_string('confirmacionCorreo.html', {'pedido': pedido, 'Content-ID': '<../../media/logo.png>'})
-        plain_message = strip_tags(html_message)
+            html_message = render_to_string('confirmacionCorreo.html', {'pedido': pedido, 'Content-ID': '<../../media/logo.png>'})
+            plain_message = strip_tags(html_message)
 
-        image_path = './media/logo.png'
-        image_name = Path(image_path).name
+            image_path = './media/logo.png'
+            image_name = Path(image_path).name
 
-        email = EmailMultiAlternatives(subject=subject, body=plain_message, from_email=user, to=['rentatractorus@gmail.com'])
-        with open(image_path, mode='rb') as f:
-            image = MIMEImage(f.read())
-            email.attach(image)
-            image.add_header('Content-ID', f"<{image_name}>")
-        email.send()
+            email = EmailMultiAlternatives(subject=subject, body=plain_message, from_email=user, to=['rentatractorus@gmail.com'])
+            with open(image_path, mode='rb') as f:
+                image = MIMEImage(f.read())
+                email.attach(image)
+                image.add_header('Content-ID', f"<{image_name}>")
+            email.send()
+            enviado = True
+        
+        if 'descargar_factura' in request.POST:
+            template = get_template("factura.html")
+            context = {
+                "pedido": pedido,
+                "icon": '{}{}'.format(settings.MEDIA_URL_F, 'logo.png'),
+                "contiene": contiene, 
+                "precioTotal": precioTotal,
+                "precioTotalEnvio": precioTotalEnvio, 
+                "precioSubtotalEnvio": precioSubtotalEnvio,
+                "iva": iva, 
+                "gastoEnvio": gastoEnvio,
+                }
+            html_template = template.render(context)
 
-        enviado = True
+            HTML(string=html_template, base_url=request.build_absolute_uri()).write_pdf(target="app/factura/factura" + str(pedido.id) + ".pdf")
+            filepath = os.path.join(settings.BASE_DIR, 'app/factura/factura' + str(pedido.id) + '.pdf')
+            print(filepath)
+            return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
 
         formulario = SearchForm(request.POST)
         if formulario.is_valid() and formulario.has_changed():
@@ -392,6 +422,45 @@ def confirmacion(request, id):
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
     else:
         enviado = False
+        
+    try:
+        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
+        cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+        
+    except ObjectDoesNotExist:
+        cliente = None
+    except BadHeaderError:
+            return HttpResponse('Invalid header found.')
+    return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal,
+                                                 'precioTotalEnvio': precioTotalEnvio, 'precioSubtotalEnvio': precioSubtotalEnvio, 
+                                                 'iva': iva, 'gastoEnvio': gastoEnvio, 'cesta': cesta,
+                                                 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
+                                                 'cliente': cliente, 'enviado': enviado})
+
+
+
+def factura(request, id):
+    pedido = Pedido.objects.get(id=id)
+    contiene = Contiene.objects.filter(pedido__id=id)
+    precioTotal = 0
+    gastoEnvio = 50
+
+    precioSubtotalEnvio = 0
+
+    for c in contiene:
+        precioTotal += (c.maquina.precio - c.maquina.descuento) * c.cantidad
+    
+    if precioTotal > 499:
+        gastoEnvio = 0
+
+    precioTotalEnvio = precioTotal + gastoEnvio
+    iva = precioTotalEnvio * 0.21
+    precioSubtotalEnvio = precioTotalEnvio - iva
+
+    cesta = []
+
+    enviado = False
+    
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
@@ -400,9 +469,9 @@ def confirmacion(request, id):
         cliente = None
     except BadHeaderError:
             return HttpResponse('Invalid header found.')
-    return render(request, 'confirmacion.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal,
-                                                 'precioTotalEnvio': precioTotalEnvio, 'cesta': cesta,
-                                                 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
+    return render(request, 'factura.html', {'pedido': pedido, 'contiene': contiene, 'precioTotal': precioTotal,
+                                                 'precioTotalEnvio': precioTotalEnvio, 'precioSubtotalEnvio': precioSubtotalEnvio, 'iva': iva, 
+                                                 'gastoEnvio': gastoEnvio, 'cesta': cesta, 'STATIC_URL': settings.STATIC_URL,
                                                  'cliente': cliente, 'enviado': enviado})
 
 

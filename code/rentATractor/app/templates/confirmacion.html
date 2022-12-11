@@ -24,7 +24,7 @@
       {% csrf_token %}
           {{form.as_p}}
       <div class="d-flex justify-content-center">
-        <button type="submit" class="btn btn-warning ">Enviar confirmación</button>
+        <button type="submit" name="enviar_correo" class="btn btn-warning ">Enviar confirmación</button>
       </div>
     </form>
 
@@ -120,11 +120,11 @@
               {% endif %}
             {% endfor %}</p>
           {% endfor %}
-          <p class="card-text d-flex justify-content-between"><span>Gastos de envío</span><span class="w-25 position-absolute end-0">
-            {% if precioTotalEnvio > 499 %} 
-              GRATIS
-            {% else %}
+          <p class="card-text d-flex justify-content-between"><span>Gastos de envío </span><span class="w-25 position-absolute end-0">
+            {% if gastoEnvio != 0 %} 
               50€
+            {% else %}
+              GRATIS
             {% endif %}
           </span></p>
           <hr/>
@@ -133,7 +133,13 @@
       </div>
     </div>
     <div class="row mt-2">
-      <a href="#" class="text-black"> Descargar factura PDF</a>
+      <form action="" method="POST" >
+        {% csrf_token %}
+          {{form.as_p}}
+        <button type="submit" formtarget="_blank" name="descargar_factura" class="btn btn-dark ">Descargar factura PDF</button>
+      
+      <!-- <a href="" name="descargar_factura" class="text-black"> Descargar factura PDF</a> -->
+        </form>
     </div>
   </div>
 </div>

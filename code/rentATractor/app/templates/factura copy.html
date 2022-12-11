@@ -1,0 +1,74 @@
+{% extends 'master.html' %}
+{% block contenido %}
+{% load custom_template_tags %}
+
+  <div class="row justify-content-center">
+    <a class="position-absolute top-10 start-50 translate-middle-x" href="/">
+      <img src="../../media/logo.png" alt="Rent a Tractor" width="250vh" />
+    </a>
+  </div>
+  <div class="row mt-3 justify-content-center text-center">
+    <p>RENT A TRACTOR, S.A.</p>
+    <p>Av.Reina Mercedes, S/N</p>
+    <p>Sevilla, España</p>
+  </div>
+  <div class="row">
+    <p><strong>NÚMERO DE PEDIDO: </strong>{{pedido.id}}</p>
+    <p><strong>FECHA DE VENTA: </strong>{{pedido.fecha_pedido}}</p>
+    <p><strong>CLIENTE: </strong>{{pedido.cliente.nombre}} {{pedido.cliente.apellidos}}</p>
+    <p><strong>DNI: </strong>{{pedido.cliente.dni}}</p>
+  </div>
+
+  <div class="row">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">MAQUINA</th>
+          <th scope="col">CANTIDAD</th>
+          <th scope="col">PRECIO</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        {% for producto in pedido.maquina.all %}
+        <tr>
+          <th scope="row">{{producto.id}}</th>
+          <td>{{producto.nombre}}</td>
+          <td>
+            {% for prodUnidades in contiene %} 
+                {% if prodUnidades.maquina.id == producto.id %} 
+                    {{prodUnidades.cantidad}} 
+                {% endif %} 
+            {% endfor %}
+          </td>
+          <td>
+            {% for prodUnidades in contiene %} 
+                {% if prodUnidades.maquina.id == producto.id %} 
+                    {% if producto.descuento != 0 %}
+                        {{producto.precio|subtract:producto.descuento|multiply:prodUnidades.cantidad}}
+                    {% else %} 
+                        {{producto.precio|multiply:prodUnidades.cantidad}} 
+                    {% endif %} € 
+                {% endif %} 
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot class="table-group-divider"></tfoot>
+      </table>
+    </table>
+  </div>
+
+  <div class="row">
+    <p>
+      <strong>GASTOS DE ENVÍO:</strong>
+      {% if gastoEnvio != 0 %} 50€ {% else %} GRATIS {% endif %}
+    </p>
+    <p><strong>SUBTOTAL: </strong>{{precioSubtotalEnvio}}</p>
+    <p><strong>IVA 21%: </strong>{{iva}}</p>
+    <p><strong>TOTAL: </strong>{{precioTotalEnvio}}</p>
+  </div>
+</div>
+
+{% endblock %}
