@@ -562,7 +562,7 @@ def confirmacion(request, id):
             user = pedido.cliente.correo
 
             html_message = render_to_string('confirmacionCorreo.html',
-                                            {'pedido': pedido, 'Content-ID': '<../../media/logo.png>'})
+                                            {'pedido': pedido, 'Content-ID': '<../../media/logo.png>', 'precioTotalEnvio': precioTotalEnvio})
             plain_message = strip_tags(html_message)
 
             image_path = './media/logo.png'
