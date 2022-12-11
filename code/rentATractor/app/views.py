@@ -503,11 +503,13 @@ def pago(request, id):
         cesta = EnCesta.objects.filter(cliente__id=Pedido.objects.get(pk=id).cliente.id)
     except:
         cesta = verCestaModal(request)
+
     for producto in cesta:
         precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
     precioTotalEnvio = precioTotal + 50 if (
             precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
+
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
         if formulario.is_valid() and formulario.has_changed():
