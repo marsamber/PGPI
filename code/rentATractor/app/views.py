@@ -397,8 +397,10 @@ def domicilioPago(request):
             cliente.dni = step1_form.cleaned_data['dni']
             cliente.email = step1_form.cleaned_data['email']
             cliente.save()
+
+            tienda = step1_form.cleaned_data['tienda']
             pedido = Pedido(id=Pedido.objects.count() + 1, fecha_pedido=datetime.date.today(), cliente=cliente,
-                            recogida_en_tienda=step1_form.cleaned_data['tienda'])
+                            recogida_en_tienda=True if tienda == '2' else False)
             pedido.save()
             for producto in cesta:
                 pedido.maquina.add(producto.maquina)
@@ -462,6 +464,9 @@ def pago(request, id):
     step2_form = Step2Form()
     formulario = SearchForm(initial={'search': None})
     pedido = Pedido.objects.get(pk=id)
+    precioTotal = 0
+    precioTotalEnvio = 0
+
     try:
         cesta = EnCesta.objects.filter(cliente__id=1)
     except:
@@ -487,12 +492,22 @@ def pago(request, id):
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+
+        for producto in cesta:
+            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
+        precioTotalEnvio = precioTotal + 50 if (precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
     except ObjectDoesNotExist:
         cliente = None
         cesta = verCestaModal(request)
+
+        for producto in cesta:
+            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
+        precioTotalEnvio = precioTotal + 50 if (precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
     return render(request, 'pago.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente,
-                   'pedido': pedido, 'step2_form': step2_form})
+                   'pedido': pedido, 'step2_form': step2_form, 'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio})
 
 
 def payment_checkout(request):
