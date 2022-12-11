@@ -29,7 +29,10 @@
                             {% endif %}
                         </span>
                     </span><a role="button" href="/favoritos/{{ producto.id }}"><i class="bi bi-bookmark-fill"></i></a></h5>
-                    <a href="#" class="btn btn-light w-100">Añadir a la cesta</a>
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <a href="/cesta/{{producto.id}}/">
+                        <button class="btn btn-light w-100">Añadir a la cesta</button>
+                    </a>
                   </div>
               </div>
         </div>
