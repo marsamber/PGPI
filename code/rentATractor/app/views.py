@@ -516,6 +516,7 @@ def pago(request, id):
             match reembolso:
                 case '1':
                     pedido.estado_pedido = EstadoPedido.comprado
+                    pedido.pago_contrareembolso = True
                     pedido.save()
                     for encesta in cesta:
                         encesta.delete()
@@ -535,7 +536,7 @@ def pago(request, id):
                    'pedido': pedido, 'step2_form': step2_form, 'precioTotal': precioTotal,
                    'precioTotalEnvio': precioTotalEnvio})
 
-def payment_checkout(request, id, ):
+def payment_checkout(request, id):
     stripe.api_key = 'sk_test_51M7jbDAogMfbRmsAelkebvd3Wsk0oeabaTqNZ959kYwIwazCJyYjOfE2N90zlDtieXZlxB41iNnEMEei0pnCw9YM000Tl9hu0p'
     contiene = Contiene.objects.filter(pedido__id=id)
 
