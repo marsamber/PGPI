@@ -498,6 +498,13 @@ def pago(request, id):
         cesta = EnCesta.objects.filter(cliente__id=Pedido.objects.get(pk=id).cliente.id)
     except:
         cesta = verCestaModal(request)
+
+    for producto in cesta:
+            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
+    precioTotalEnvio = precioTotal + 50 if (
+                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
+
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
         if formulario.is_valid() and formulario.has_changed():
@@ -518,20 +525,11 @@ def pago(request, id):
 
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
     except ObjectDoesNotExist:
         cliente = None
 
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
-
+    print(precioTotal)
+    print(precioTotalEnvio)
     return render(request, 'pago.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente,
                    'pedido': pedido, 'step2_form': step2_form, 'precioTotal': precioTotal,
