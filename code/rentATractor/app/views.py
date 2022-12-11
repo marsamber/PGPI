@@ -222,6 +222,7 @@ def producto(request, id):
     sugerencias = Maquina.objects.filter(tipo_maquina__icontains=producto.tipo_maquina).exclude(id=id).order_by('?')[:3]
 
     cesta = []
+    favoritos = []
 
     formulario = SearchForm(initial={'search': None})
 
@@ -233,11 +234,12 @@ def producto(request, id):
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
+        favoritos = ClienteRegistrado.objects.get(cliente__id=cliente.id).gusta.all()
     except ObjectDoesNotExist:
         cliente = None
         cesta = verCestaModal(request)
     return render(request, 'producto.html',
-                  {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'cesta': cesta,
+                  {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'favoritos': favoritos, 'cesta': cesta,
                    'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
