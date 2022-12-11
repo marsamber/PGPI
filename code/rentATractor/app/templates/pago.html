@@ -1,20 +1,45 @@
 {% extends 'master.html' %} {% block contenido %}
 {% load custom_template_tags %}
-{#<script>#}
-{#  var stripe = Stripe('pk_test_51M7jbDAogMfbRmsAsI3YtWHGKCfGn62wE8FwauuaugS2auWctmSshr9jZ8YVWK1VEu51caloqvsYVcSKF8hhY2zF00tqxpgYOi');#}
-{#</script>#}
+
 <form method="POST">
     {% csrf_token %}
 <div class="text-center">
-  <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
-  <span class="badge text-bg-warning fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
+  <span class="badge text-bg-light fs-5"> <a class = "text-decoration-none text-black">Métodos de envío</a></span>
+  <span class="badge text-bg-warning fs-5"><a class = "text-decoration-none text-black">Métodos de pago</a></span>
 </div>
 <div class="row mt-5">
-  <div class="col-md-8 text-center">
-    <strong class="text-start" style="font-size: xx-large;">Pago</strong><br/>
-{#    <button class="btn btn-warning w-50 mt-2">Pago a contrarreembolso</button><br/>#}
-{#    <button class="btn btn-dark w-50 mt-2">Tarjeta de débito o crédito</button>#}
-      {{ step2_form }}
+  <div class="col-md-8">
+    {% for field in  step2_form %}
+      <strong style="font-size: xx-large">{{ field.label }}</strong>
+      <div class="row mt-3">
+        {% for choice in field.field.choices %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow p-3 mb-5 bg-white rounded">
+              {% if choice.0 == 1 %}
+              <div class="text-center"><i class="bi bi-cash-coin me-2" style="font-size: 60px;"></i><i class="bi bi-box ms-2" style="font-size: 60px;"></i></div>
+              {% elif choice.0 == 2%}
+              <div class="text-center"><i class="bi bi-credit-card" style="font-size: 60px;"></i></div>
+              {% endif %}
+              <div class="card-body">
+                <p class="card-text">
+                  <div class="form-check">
+                    {% if choice.0 == 1%}
+                      <input class="form-check-input" type="radio" name="reembolso" value="{{choice.0}}" id="id_reembolso_0">
+                      <label class="form-check-label" for="id_reembolso_0">
+                    {% elif choice.0 == 2%}
+                      <input class="form-check-input" type="radio" name="reembolso" value="{{choice.0}}" id="id_reembolso_1">
+                      <label class="form-check-label" for="id_reembolso_1">
+                    {% endif %}
+                    {{choice.1}}
+                    </label>
+                  </div>
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+    {% endfor %}
   </div>
    <div class="col-md-4">
     <div class="card border-0 bg-light">
@@ -36,14 +61,8 @@
                   unidades
                 {% endif %}</p>
           {% endfor %}
-          <div class="form-check">
-              {{ step1_form.tienda }}
-              <label class="form-check-label">{{ step1_form.tienda.label }}</label>
-
-          </div>
-
           <hr/>
-          <strong class="card-text d-flex justify-content-between"><span>Total (sin gastos de envío)</span><span class="w-25 position-absolute end-0">{{precioTotal}} €</span></strong>
+          <strong class="card-text d-flex justify-content-between"><span>Total</span><span class="w-25 position-absolute end-0">{{precioTotal}} €</span></strong>
       </div>
   </div>
   </div>
