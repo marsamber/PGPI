@@ -1,6 +1,8 @@
 from django.contrib import admin
-from app.models import Maquina, Cliente, Pedido, ClienteRegistrado, Opinion, Reclamacion, Contiene, EnCesta, Factura
+from app.models import Maquina, Cliente, Pedido, ClienteRegistrado, Opinion, Reclamacion, Contiene, EnCesta, Factura, LineaFactura
 from django.utils.html import mark_safe
+
+
 
 class MaquinaAdmin(admin.ModelAdmin):
     list_display = ["id", "nombre", "marca", "precio", "stock", "tipo_maquina", "descuento", "sugerido"]
@@ -131,6 +133,31 @@ class EnCestaAdmin(admin.ModelAdmin):
     get_cliente.short_description = 'cliente'
     get_cliente.admin_order_field = 'cliente'
 
+class FacturaAdmin(admin.ModelAdmin):
+    list_display = ["get_pedido", "dni", "nombre_cliente", "direccion", "fecha"]
+    search_fields = ["dni"]
+    search_help_text = 'Búsqueda por el "DNI" del cliente o "id" del pedido.'
+    list_filter = ["pedido__id"]
+    list_per_page = 10
+
+    def get_pedido(self, obj):
+        return obj.pedido.id
+    get_pedido.short_description = 'pedido'
+    get_pedido.admin_order_field = 'pedido'
+
+class LineaFacturaAdmin(admin.ModelAdmin):
+    list_display = ["get_factura", "nombre", "iva", "precio_sin_iva", "descuento", "cantidad"]
+    search_fields = ["nombre"]
+    search_help_text = 'Búsqueda por el "nombre" de la máquina o "id" de la factura.'
+    list_filter = ["factura__pedido__id"]
+    list_per_page = 10
+
+    def get_factura(self, obj):
+        return obj.factura.pedido.id
+    get_factura.short_description = 'pedido'
+    get_factura.admin_order_field = 'pedido'
+
+
 admin.site.register(Maquina, MaquinaAdmin)
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(Pedido, PedidoAdmin)
@@ -139,4 +166,5 @@ admin.site.register(Opinion, OpinionAdmin)
 admin.site.register(Reclamacion, ReclamacionAdmin)
 admin.site.register(Contiene, ContieneAdmin)
 admin.site.register(EnCesta, EnCestaAdmin)
-admin.site.register(Factura)
+admin.site.register(Factura, FacturaAdmin)
+admin.site.register(LineaFactura, LineaFacturaAdmin)
