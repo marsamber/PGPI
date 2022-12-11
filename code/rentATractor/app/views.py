@@ -535,6 +535,7 @@ def confirmacion(request, id):
     for producto in cesta:
         producto.delete()
     contiene = Contiene.objects.filter(pedido__id=id)
+  
     precioTotal = 0
     gastoEnvio = 50
 
@@ -562,7 +563,7 @@ def confirmacion(request, id):
             user = pedido.cliente.correo
 
             html_message = render_to_string('confirmacionCorreo.html',
-                                            {'pedido': pedido, 'Content-ID': '<../../media/logo.png>', 'precioTotalEnvio': precioTotalEnvio})
+                                            {'pedido': pedido, 'Content-ID': '<../../media/logo.png>', 'precioTotalEnvio': precioTotalEnvio, 'contiene': contiene})
             plain_message = strip_tags(html_message)
 
             image_path = './media/logo.png'
@@ -586,12 +587,14 @@ def confirmacion(request, id):
                                               apellidos_cliente=pedido.cliente.apellidos,
                                               direccion=pedido.direccion_facturacion, dni=pedido.cliente.dni)
                 fact.save()
-                contienes = Contiene.objects.filter(pedidod=pedido)
-                for contiene in contienes:
-                    LineaFactura.objects.create(factura=fact, nombre=contiene.maquina.nombre,
-                                                iva=(contiene.maquina.precio - contiene.maquina.descuento) * 0.21,
-                                                precio_sin_iva=(contiene.maquina.precio) * 0.79,cantidad=contiene.cantidad, descuento=contiene.maquina.descuento)
-
+                contienes = Contiene.objects.filter(pedido=pedido)
+                
+                for c in contienes:
+                    
+                    lf = LineaFactura.objects.create(factura=fact, nombre=c.maquina.nombre,
+                                                iva="{:.2f}".format(round((c.maquina.precio - c.maquina.descuento) * 0.21, 2)),
+                                                precio_sin_iva="{:.2f}".format(round((c.maquina.precio) * 0.79, 2)),cantidad=c.cantidad, descuento=c.maquina.descuento)
+                    lf.save()
             template = get_template("factura.html")
             context = {
                 "pedido": pedido,

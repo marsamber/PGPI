@@ -50,28 +50,26 @@
         </thead>
         <tbody class="table-group-divider">
         {% for producto in pedido.maquina.all %}
-        <tr>
-            <th scope="row">{{producto.id}}</th>
-            <td>{{producto.nombre}}</td>
-            <td>
-            {% for prodUnidades in contiene %} 
-                {% if prodUnidades.maquina.id == producto.id %} 
-                    {{prodUnidades.cantidad}} 
-                {% endif %} 
-            {% endfor %}
-            </td>
-            <td>
-            {% for prodUnidades in contiene %} 
-                {% if prodUnidades.maquina.id == producto.id %} 
-                    {% if producto.descuento != 0 %}
-                        {{producto.precio|subtract:producto.descuento|multiply:prodUnidades.cantidad}}
-                    {% else %} 
-                        {{producto.precio|multiply:prodUnidades.cantidad}} 
-                    {% endif %} € 
-                {% endif %} 
-            {% endfor %}
-            </td>
-        </tr>
+            <tr>
+                <th scope="row">{{producto.id}}</th>
+                <td>{{producto.nombre}}</td>
+                <td>
+                {% for prodUnidades in contiene %} 
+                    {% if prodUnidades.maquina.id == producto.id %} 
+                        {{prodUnidades.cantidad}} 
+                    {% endif %} 
+                {% endfor %}
+                </td>
+                <td>{{producto.precio}}€</td>
+            </tr>
+            {% if producto.descuento != 0 %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>- {{producto.descuento}}€</td>
+                </tr>
+            {% endif %}
         {% endfor %}
         
         <tr>
@@ -84,13 +82,13 @@
             <td></td>
             <td>Subtotal</td>
             <td></td>
-            <td>{{precioSubtotalEnvio}}</td>
+            <td>{{precioSubtotalEnvio}}€</td>
         </tr>
         <tr>
             <td></td>
             <td>IVA 21%:</td>
             <td></td>
-            <td>{{iva}}</td>
+            <td>{{iva}}€</td>
         </tr>
         </tbody>
         <tfoot class="table-group-divider">
@@ -98,7 +96,7 @@
             <td></td>
             <th >Total</th>
             <td></td>
-            <th>{{precioTotalEnvio}}</th>
+            <th>{{precioTotalEnvio}}€</th>
         </tr>
         </tfoot>
         </table>
