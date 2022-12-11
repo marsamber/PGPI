@@ -15,8 +15,12 @@
 
     <form action="" method="POST" >
       {% csrf_token %}
-
-          {{form.as_p}}
+      {% for field in form %}
+      <div class="form-floating mb-3">
+        {{ field }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      </div>
+      {% endfor %}
       <div class="d-flex justify-content-center m-3">
         <button type="submit" class="btn btn-warning ">Enviar</button>
       </div>

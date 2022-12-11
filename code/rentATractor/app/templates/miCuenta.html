@@ -14,12 +14,22 @@
         <div class="col-md-4">
             <div class="row">
                 <div class="col">
-                    <span>{{ field.label }}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{ field }}
+                    {% if field.name == 'fecha_nacimiento' %}
+                        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                            <div class="form-floating mb-3">
+                                {{ field }}
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                            <div class="input-group-append mb-3" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                <div class="input-group-text h-100"><i class="bi bi-calendar"></i></div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="form-floating mb-3">
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -29,4 +39,16 @@
     <input type="submit" class="btn btn-warning w-25 mt-2" value="Editar">
 </div>
 </form>
+
+<script> $(function () {
+    $("#datetimepicker1").datetimepicker({
+        format: "DD/MM/YYYY",
+        language: "es",
+        autoclose: true,
+        todayHighlight: true,
+        value: new Date(),
+        minDate: new Date(1900, 0, 1),
+        maxDate: Date.now(),
+    });
+  });</script>
 {% endblock %}

@@ -31,7 +31,8 @@ class RegisterForm(forms.Form):
     apellidos = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Apellidos')
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
     dni = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='DNI')
-    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': "form-control"}),
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control datetimepicker-input', 'id': 'datefield',
+            'data-target': '#datetimepicker1', 'min': '1900-01-01', 'max': '2021-01-01'}),
                                        label='Fecha de nacimiento')
     usuario = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Nombre de usuario')
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': "form-control"}), label='Contraseña')
@@ -44,7 +45,8 @@ class MiCuentaForm(forms.Form):
     apellidos = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Apellidos')
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
     dni = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='DNI')
-    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': "form-control"}),
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'}),
                                        label='Fecha de nacimiento')
     direccion = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Dirección',
                                 required=False)
@@ -64,7 +66,7 @@ class ComplaintForm(forms.Form):
         attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de referencia del producto",
         required=True)
     message = forms.CharField(widget=forms.Textarea(
-attrs={"class": "form-control me-2", "placeholder": "Escribe tu reclamación"}), label="Mensaje", required=True)
+attrs={"class": "form-control me-2 h-100", "placeholder": "Escribe tu reclamación"}), label="Mensaje", required=True)
 
 
 class OpinionForm(forms.Form):
@@ -72,7 +74,7 @@ class OpinionForm(forms.Form):
         attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de referencia del producto",
         required=True)
     message = forms.CharField(widget=forms.Textarea(
-        attrs={"class": "form-control me-2", "placeholder": "Escribe tu opinión"}), label="Mensaje", required=True)
+        attrs={"class": "form-control me-2 h-100", "placeholder": "Escribe tu opinión"}), label="Mensaje", required=True)
 
 
 class Step1Form(forms.Form):

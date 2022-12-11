@@ -5,18 +5,14 @@
   <div class="row mt-4">
   <div class="col">
     <div class="feature col text-center">
-      <div class="d-inline-flex align-items-center justify-content-centerfs-2 mb-3">
-      <button class="btn btn-outline-dark rounded-circle flex-shrink-0" type="submit">
-        <div style="width: 60px;
-            height: 60px;
-            border-radius: 40px;
-            margin: auto;
-            text-align: center;
-            line-height: 60px;
-            font-size: 30px;"> 
-            <i class="bi bi-geo-alt-fill"></i>
-        </div>
-      </button>
+      <div class="d-inline-flex align-items-center justify-content-centerfs-2">
+        <button type="submit" class="btn btn-default btn-circle btn-outline-dark mb-3" style=" width: 80px;
+        height: 80px;
+        padding: 6px 0px;
+        border-radius: 40px;
+        text-align: center;
+        font-size: 40px;
+        line-height: 1.42857;"><i class="bi bi-geo-alt-fill"></i></button>
       </div>
       <p><strong>Visítanos</strong></p>
       <p class="fw-light">Avenida Reina Mercedes, s/n</p>
@@ -25,18 +21,14 @@
   </div>
   <div class="col mt-2">
     <div class="feature col text-center">
-      <div class="d-inline-flex align-items-center justify-content-centerfs-2 mb-3">
-      <button class="btn btn-outline-dark rounded-circle flex-shrink-0" type="submit">
-        <div style="width: 60px;
-            height: 60px;
-            border-radius: 40px;
-            margin: auto;
-            text-align: center;
-            line-height: 60px;
-            font-size: 30px;"> 
-            <i class="bi bi-telephone-fill"></i>
-          </div>
-        </button>
+      <div class="d-inline-flex align-items-center justify-content-centerfs-2">
+        <button type="submit" class="btn btn-default btn-circle btn-outline-dark mb-3" style=" width: 80px;
+        height: 80px;
+        padding: 6px 0px;
+        border-radius: 40px;
+        text-align: center;
+        font-size: 40px;
+        line-height: 1.42857;"><i class="bi bi-telephone-fill"></i></button>
       </div>
       <p><strong>Llamanos</strong></p>
       <p class="fw-light">900 00 00 00</p>
@@ -44,18 +36,14 @@
   </div>
   <div class="col">
     <div class="feature col text-center">
-      <div class="d-inline-flex align-items-center justify-content-centerfs-2 mb-3">
-      <button class="btn btn-outline-dark rounded-circle flex-shrink-0" type="submit">
-        <div style="width: 60px;
-            height: 60px;
-            border-radius: 40px;
-            margin: auto;
-            text-align: center;
-            line-height: 60px;
-            font-size: 30px;"> 
-            <i class="bi bi-envelope-at-fill"></i>
-          </div>
-        </button>
+      <div class="d-inline-flex align-items-center justify-content-centerfs-2">
+        <button type="submit" class="btn btn-default btn-circle btn-outline-dark mb-3" style=" width: 80px;
+        height: 80px;
+        padding: 6px 0px;
+        border-radius: 40px;
+        text-align: center;
+        font-size: 40px;
+        line-height: 1.42857;"><i class="bi bi-envelope-at-fill"></i></button>
       </div>
       <p><strong>Escríbenos</strong></p>
       <p class="fw-light">rentatractorus@gmail.com</p>
@@ -72,7 +60,12 @@
   {% else %}
     <form action="/contacto/" method="POST">
       {% csrf_token %}
-          {{form.as_p}}
+          {% for field in form %}
+          <div class="form-floating mb-3">
+            {{ field }}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+          {% endfor %}
           <div class="form-check">
           <input
             class="form-check-input"
