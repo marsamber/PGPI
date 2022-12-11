@@ -446,49 +446,6 @@ def remove_pedido(request, id):
         pass
     return redirect('/domicilioPago')
 
-
-def datosPago(request):
-    precioTotal = 0
-    precioTotalEnvio = 0
-    cesta = []
-    pedido = Pedido()
-
-    formulario = SearchForm(initial={'search': None})
-    step1_form = Step1Form()
-
-    if request.method == 'POST':
-        formulario = SearchForm(request.POST)
-        if formulario.is_valid() and formulario.has_changed():
-            request.session['search'] = formulario.cleaned_data['search']
-            return redirect('/catalogo/Resultados de: ' + request.session['search'])
-    try:
-        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
-        cesta = EnCesta.objects.filter(cliente__id=1)
-
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
-
-        pedido = Pedido.objects.filter(cliente__id=1).last()
-    except ObjectDoesNotExist:
-        cliente = None
-        cesta = verCestaModal(request)
-
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
-
-    return render(request, 'datosPago.html',
-                  {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'pedido': pedido,
-                   'cesta': cesta,
-                   'formulario': formulario, 'step1_form': step1_form, 'STATIC_URL': settings.STATIC_URL,
-                   'cliente': cliente})
-
-
 def pago(request, id):
     step2_form = Step2Form()
     formulario = SearchForm(initial={'search': None})
