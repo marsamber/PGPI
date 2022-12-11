@@ -55,17 +55,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Tarjeta',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('titular', models.CharField(max_length=256)),
-                ('numero', models.CharField(max_length=256)),
-                ('codigo', models.CharField(max_length=256)),
-                ('fecha_validez', models.DateField()),
-                ('usuario', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Reclamacion',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -73,11 +62,6 @@ class Migration(migrations.Migration):
                 ('maquina', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.maquina')),
                 ('pedido', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.pedido')),
             ],
-        ),
-        migrations.AddField(
-            model_name='pedido',
-            name='tarjeta',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='app.tarjeta'),
         ),
         migrations.CreateModel(
             name='Opinion',

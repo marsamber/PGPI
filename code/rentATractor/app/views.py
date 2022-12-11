@@ -21,7 +21,7 @@ from app.models import ClienteRegistrado, Contiene, EnCesta, Maquina, Opinion, P
 import stripe
 from app.forms import OrderForm, SearchForm, ContactForm, ComplaintForm, Step1Form, OpinionForm, MiCuentaForm, \
     RegisterForm, SeguimientoPedidoForm, Step2Form
-from .models import Maquina, Opinion, Pedido, Reclamacion, Cliente, EstadoPedido
+from .models import Maquina, Opinion, Pedido, Reclamacion, Cliente, EstadoPedido, Factura, LineaFactura
 from django.contrib.auth import authenticate, login as log, logout as django_logout
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -96,8 +96,7 @@ def autenticar(request):
         if user is not None:
             log(request, user)
             return redirect('/')
-        else:
-            cesta = EnCesta.objects.filter(cliente__id=1)
+    cesta = verCestaModal(request)
     return render(request, "login_error.html", {'cesta': cesta, 'formulario': formulario,
                                                 'STATIC_URL': settings.STATIC_URL})
 
@@ -446,49 +445,6 @@ def remove_pedido(request, id):
         pass
     return redirect('/domicilioPago')
 
-
-def datosPago(request):
-    precioTotal = 0
-    precioTotalEnvio = 0
-    cesta = []
-    pedido = Pedido()
-
-    formulario = SearchForm(initial={'search': None})
-    step1_form = Step1Form()
-
-    if request.method == 'POST':
-        formulario = SearchForm(request.POST)
-        if formulario.is_valid() and formulario.has_changed():
-            request.session['search'] = formulario.cleaned_data['search']
-            return redirect('/catalogo/Resultados de: ' + request.session['search'])
-    try:
-        cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
-        cesta = EnCesta.objects.filter(cliente__id=1)
-
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
-
-        pedido = Pedido.objects.filter(cliente__id=1).last()
-    except ObjectDoesNotExist:
-        cliente = None
-        cesta = verCestaModal(request)
-
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
-
-    return render(request, 'datosPago.html',
-                  {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'pedido': pedido,
-                   'cesta': cesta,
-                   'formulario': formulario, 'step1_form': step1_form, 'STATIC_URL': settings.STATIC_URL,
-                   'cliente': cliente})
-
-
 def pago(request, id):
     step2_form = Step2Form()
     formulario = SearchForm(initial={'search': None})
@@ -520,8 +476,6 @@ def pago(request, id):
                     pedido.estado_pedido = 'Comprado'
                     pedido.pago_contrareembolso = True
                     pedido.save()
-                    for encesta in cesta:
-                        encesta.delete()
                     return redirect(f'/confirmacion/{pedido.id}')
                 case '2':
                     return payment_checkout(request, id, precioTotal >= 500)
@@ -575,6 +529,11 @@ def payment_checkout(request, id, envio):
 
 def confirmacion(request, id):
     pedido = Pedido.objects.get(id=id)
+    pedido.estado_pedido = 'Comprado'
+    pedido.save()
+    cesta = EnCesta.objects.filter(cliente=pedido.cliente)
+    for producto in cesta:
+        producto.delete()
     contiene = Contiene.objects.filter(pedido__id=id)
     precioTotal = 0
     gastoEnvio = 50
@@ -619,6 +578,20 @@ def confirmacion(request, id):
             enviado = True
 
         if 'descargar_factura' in request.POST:
+            try:
+                fact = Factura.objects.get(pedido=pedido)
+            except:
+                fact = Factura.objects.create(pedido=pedido, fecha=pedido.fecha_pedido,
+                                              nombre_cliente=pedido.cliente.nombre,
+                                              apellidos_cliente=pedido.cliente.apellidos,
+                                              direccion=pedido.direccion_facturacion, dni=pedido.cliente.dni)
+                fact.save()
+                contienes = Contiene.objects.filter(pedidod=pedido)
+                for contiene in contienes:
+                    LineaFactura.objects.create(factura=fact, nombre=contiene.maquina.nombre,
+                                                iva=(contiene.maquina.precio - contiene.maquina.descuento) * 0.21,
+                                                precio_sin_iva=(contiene.maquina.precio) * 0.79,cantidad=contiene.cantidad, descuento=contiene.maquina.descuento)
+
             template = get_template("factura.html")
             context = {
                 "pedido": pedido,
