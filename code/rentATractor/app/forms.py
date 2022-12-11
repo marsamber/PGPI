@@ -29,7 +29,7 @@ class RegisterForm(forms.Form):
     template_name = 'register_snippet.html'
     nombre = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Nombre')
     apellidos = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Apellidos')
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electróni
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
     fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control datetimepicker-input', 'id': 'datefield',
             'data-target': '#datetimepicker1', 'min': '1900-01-01', 'max': '2021-01-01'}),
                                        label='Fecha de nacimiento')
