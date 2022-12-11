@@ -70,17 +70,8 @@ class Pedido(models.Model):
     estado_pedido = models.CharField(choices=EstadoPedido.choices(), default='No pagado', max_length=256)
     cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
     maquina = models.ManyToManyField('Maquina')
-    tarjeta = models.ForeignKey('Tarjeta', null=True, on_delete=models.SET_NULL)
     pago_contrareembolso = models.BooleanField(default=False)
     recogida_en_tienda = models.BooleanField(default=False)
-
-
-class Tarjeta(models.Model):
-    titular = models.CharField(max_length=256)
-    numero = models.CharField(max_length=256)
-    codigo = models.CharField(max_length=256)
-    fecha_validez = models.DateField()
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Opinion(models.Model):
