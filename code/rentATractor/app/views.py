@@ -431,7 +431,7 @@ def domicilioPago(request):
                     Contiene(pedido=pedido, maquina=producto.maquina, cantidad=producto.cantidad).save()
             return redirect(f'/pago/{pedido.id}')
     for producto in cesta:
-        precioTotal += producto.maquina.precio * (1 - producto.maquina.descuento) * producto.cantidad
+        precioTotal += producto.maquina.precio - producto.maquina.descuento * producto.cantidad
     return render(request, 'domicilioPago.html',
                   {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario,
                    'STATIC_URL': settings.STATIC_URL, 'cliente': cliente,
@@ -503,7 +503,7 @@ def payment_checkout(request, id, envio):
                 'product_data': {
                     'name': producto.maquina.nombre,
                 },
-                'unit_amount': int(100 * (producto.maquina.precio * (1 - producto.maquina.descuento))),
+                'unit_amount': int(100 * (producto.maquina.precio - producto.maquina.descuento)),
             },
             'quantity': producto.cantidad,
         })
