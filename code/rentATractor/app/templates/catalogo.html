@@ -57,9 +57,11 @@
                         {% endif %}
                     </h5>
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <a href="/cesta/{{producto.id}}/">
-                        <button class="btn btn-light w-100">Añadir a la cesta</button>
-                    </a>
+                    {% if producto.stock != 0 %}
+                        <a href="/cesta/{{producto.id}}/">
+                            <button class="btn btn-light w-100">Añadir a la cesta</button>
+                        </a>
+                    {% endif %}
                 </div>
               </div>
         </div>

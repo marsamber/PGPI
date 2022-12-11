@@ -35,7 +35,7 @@
                     <input type="number" class="form-control" value="{{producto.cantidad}}" min="1" aria-label="Unidades" aria-describedby="addon-wrapping" onchange="document.location.href = '/cesta/update/{{producto.maquina.id}}/' + this.value">
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <a href="/cesta/remove/{{producto.maquina.id}}/">
-                      <span class="input-group-text" id="addon-wrapping" role="button" onclick="alert('Eliminar producto de la cesta')"><i class="bi bi-trash"></i></span>
+                      <span class="input-group-text" id="addon-wrapping" role="button"><i class="bi bi-trash"></i></span>
                     </a></div>
                 </div>
               </div>
