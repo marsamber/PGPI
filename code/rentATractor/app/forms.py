@@ -29,8 +29,7 @@ class RegisterForm(forms.Form):
     template_name = 'register_snippet.html'
     nombre = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Nombre')
     apellidos = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='Apellidos')
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electrónico')
-    dni = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}), label='DNI')
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control"}), label='Correo electróni
     fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control datetimepicker-input', 'id': 'datefield',
             'data-target': '#datetimepicker1', 'min': '1900-01-01', 'max': '2021-01-01'}),
                                        label='Fecha de nacimiento')
@@ -78,26 +77,28 @@ class OpinionForm(forms.Form):
 
 
 class Step1Form(forms.Form):
+    template_name = 'domicilioPago_snippet.html'
     name = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Nombre"}), label="Nombre", required=True)
     surname = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Apellidos"}), label="Apellidos", required=True)
     address = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección", required=True)
-    number = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXX"}), label="Número", required=True)
-    cp = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXXX"}), label="Código Postal", required=True)
-    city = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre de la población"}), label="Población",
-        required=True)
-    province = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre de la provincia"}), label="Provincia",
-        required=True)
-    country = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre del país"}), label="País", required=True)
-    phone = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="País", required=True)
+    dni = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="DNI", required=True)
+    fecha_nacimiento = forms.DateField(
+        widget=forms.DateInput(attrs={'class': "form-control me-2", 'placeholder': 'dd/mm/yyyy'}),
+        label='Fecha de nacimiento', required=True)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control me-2"}), label='Correo eléctronico')
+    tienda = forms.BooleanField(widget=forms.CheckboxInput(
+        attrs={'class': "form-check-input", 'type': "radio", 'name': "flexRadioDefault", 'type': 'checkbox'}),
+        label='Recogida en tienda', required=False)
+
+class Step2Form(forms.Form):
+    CHOICES=[(1,'Pago a contrarreembolso'),(2, 'Pago con tarjeta de débito o crédito')]
+    reembolso = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label='Método de pago')
 
 class SeguimientoPedidoForm(forms.Form):
-    idPedido = forms.IntegerField(widget=forms.TextInput(attrs={"class": "form-control me-2", "placeholder": "Introduzca el número de su pedido"}), label=False, required=True)
+    idPedido = forms.IntegerField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Introduzca el número de su pedido"}), label=False,
+        required=True)
