@@ -12,40 +12,44 @@
         {% for producto in pedido.maquina.all %}
           <div class="col-md-4">
               <div class="card mb-3 border-0" style="max-width: 540px;">
-                  <div class="row g-0">
-                    <div class="col-md-6">
-                      <img src="../../media/{{producto.imagen}}" class="img-fluid rounded-start" alt="{{producto.nombre}}">
-                    </div>
-                    <div class="col-md-6">
-                      <div class="card-body">
-                        <h5 class="text-muted">
-                          {% if pedido.estado_pedido != 'Recogido' %}
-                          <i class="bi bi-square"></i>
-                          {% else %}
-                          <i class="bi bi-check-square"></i>
-                          {% endif %}
-                          {{pedido.estado_pedido}}</h5>
-                        <h5 class="card-title">{{pedido.fecha_pedido}}</h5>
-                        <p class="card-text">{{producto.nombre}}</p>
-                        <p class="card-text fw-light">Ref. maquina: {{producto.id}}</p>
-                        <p class="card-text fw-light">Ref. pedido: {{pedido.id}}</p>
-                        <strong class="card-text">
-                          {% if producto.descuento != 0 %}
-                          {{producto.precio|subtract:producto.descuento}}
-                          {% else %}
-                          {{producto.precio}}
-                          {% endif %} €</strong> <br/>
-                        <a href="/confirmacion/{{pedido.id}}" class="text-black">Ver pedido</a> <br/>
-                        {% if pedido.estado_pedido == 'Recogido' %}
-                          <a href="/opinion/{{pedido.id}}" class="btn btn-outline-warning w-100 mt-2">Añadir opinión</a> 
+                <div class="row g-0">
+                  <div class="col-md-6">
+                    <img src="../../media/{{producto.imagen}}" class="img-fluid rounded-start" alt="{{producto.nombre}}">
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card-body">
+                      <h5 class="text-muted">
+                        {% if pedido.estado_pedido != 'Recogido' %}
+                        <i class="bi bi-square"></i>
+                        {% else %}
+                        <i class="bi bi-check-square"></i>
                         {% endif %}
-                        {% if pedido.estado_pedido == 'Enviado' or pedido.estado_pedido == 'Recogido' or pedido.estado_pedido == 'Entregado'%}
-                          <a href="/reclamacion/{{pedido.id}}" class="btn btn-light w-100 mt-2">Añadir reclamación</a> 
-                        {% endif %}
-                      </div>
+                        {{pedido.estado_pedido}}</h5>
+                      <h5 class="card-title">{{pedido.fecha_pedido}}</h5>
+                      <p class="card-text">{{producto.nombre}}</p>
+                      <p class="card-text fw-light">Ref. maquina: {{producto.id}}</p>
+                      <p class="card-text fw-light">Ref. pedido: {{pedido.id}}</p>
+                      <strong class="card-text">
+                        {% if producto.descuento != 0 %}
+                        {{producto.precio|subtract:producto.descuento}}
+                        {% else %}
+                        {{producto.precio}}
+                        {% endif %} €</strong> <br/>
+                      {% if pedido.estado_pedido == 'No pagado' %}
+                      <a href="/pago/{{pedido.id}}" class="btn btn-dark w-100 mt-2">PAGAR</a> <br/>
+                      {% else %}
+                      <a href="/confirmacion/{{pedido.id}}" class="text-black">Ver pedido</a> <br/>
+                      {% endif %}
+                      {% if pedido.estado_pedido == 'Recogido' %}
+                        <a href="/opinion/{{pedido.id}}" class="btn btn-outline-warning w-100 mt-2">Añadir opinión</a> 
+                      {% endif %}
+                      {% if pedido.estado_pedido == 'Enviado' or pedido.estado_pedido == 'Recogido' or pedido.estado_pedido == 'Comprado'%}
+                        <a href="/reclamacion/{{pedido.id}}" class="btn btn-light w-100 mt-2">Añadir reclamación</a> 
+                      {% endif %}
                     </div>
                   </div>
                 </div>
+              </div>
           </div>
         {% endfor %}
       {% endfor %}

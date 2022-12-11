@@ -67,7 +67,7 @@ class Pedido(models.Model):
     fecha_pedido = models.DateField()
     direccion_envio = models.CharField(max_length=256)
     direccion_facturacion = models.CharField(max_length=256)
-    estado_pedido = models.CharField(choices=EstadoPedido.choices(), default=EstadoPedido.comprado, max_length=256)
+    estado_pedido = models.CharField(choices=EstadoPedido.choices(), default='No pagado', max_length=256)
     cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
     maquina = models.ManyToManyField('Maquina')
     tarjeta = models.ForeignKey('Tarjeta', null=True, on_delete=models.SET_NULL)

@@ -6,6 +6,19 @@
         <img src="../../media/{{producto.imagen}}" class="img-fluid" alt={{nombre}}>
     </div>
     <div class="col-md-4 my-auto">
+        <div class="d-flex flex-row-reverse"> 
+            {% if not noCliente %}
+                {% if producto in favoritos %}
+                <a role="button" href="/favoritos/{{ producto.id }}">
+                    <i class="bi bi-bookmark-fill"></i>
+                </a>
+                {% else %}
+                <a role="button" href="/favoritos/{{ producto.id }}">
+                    <i class="bi bi-bookmark"></i>
+                </a>
+                {% endif %}
+            {% endif %}
+        </div>
         <h5>{{producto.nombre}}</h5>
         <p>{{producto.descripcion}}</p>
         <h4><span>
@@ -24,13 +37,15 @@
             </span>
         </span></h4>
         <input type="hidden" name="next" value="{{ request.path }}">
-        <a href="/cesta/{{producto.id}}/">
-            <button class="btn btn-warning w-100">Añadir al carrito</button>
-        </a>
-        <p class="mt-3 mb-0"><i class="bi bi-box"></i> <span class="text-decoration-underline">Envío a domicilio</span></p>
+        {% if producto.stock != 0 %}
+            <a href="/cesta/{{producto.id}}/">
+                <button class="btn btn-warning w-100">Añadir al carrito</button>
+            </a>
+        {% endif %}
+        <p class="mt-3 mb-0"><i class="bi bi-box"></i> <span class="text-decoration-underline">Envío a domicilio o Recogia en tienda</span></p>
         <p class="text-muted">Envío GRATIS a España por compra superior a 499€</p>
-        <p class="mt-3"><i class="bi bi-credit-card"></i> <span class="text-decoration-underline">Pago contra
-                reembolso</span></p>
+        <p class="mt-3 mb-0"><i class="bi bi-credit-card"></i> <span class="text-decoration-underline">Pago contrarreembolso</span></p>
+        <p class="text-muted">Ver Condiciones de Alquiler</p>
     </div>
 </div>
 <div class="row mt-5">
@@ -46,11 +61,15 @@
         <strong style="font-size: xx-large;">Opiniones</strong><br />
         <dl>
             {% if opiniones|length == 0 %}
-                <dd class="ms-3">No hay opiniones</dd>
+                <dd class="ms-3 fst-italic">No hay opiniones para este producto</dd>
             {% endif %}
             {% for opinion in opiniones %}
-            <dt>{{opinion.pedido.cliente.nombre}}</dt>
-            <dd class="ms-3">{{opinion.cuerpo}}</dd>
+            <div class="card bg-light m-2">
+            <div class="card-body">
+                <h6 class="card-title">{{opinion.pedido.cliente.nombre}}</h6>
+                <p class="card-text">{{opinion.cuerpo}}</p>
+            </div>
+            </div>
             {% endfor %}
         </dl>
     </div>
