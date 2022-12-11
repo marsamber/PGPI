@@ -36,7 +36,6 @@ urlpatterns = [
     path('domicilioPago/', views.domicilioPago),
     path('borraPedido/<int:id>', views.remove_pedido),
     path('create-checkout-session', views.payment_checkout),
-    path('datosPago/', views.datosPago),
     path('pago/<int:id>', views.pago),
     path('confirmacion/<int:id>', views.confirmacion),
     path('factura/<int:id>', views.factura),
