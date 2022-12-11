@@ -216,7 +216,7 @@ def catalogo(request, categoria):
 def producto(request, id):
     producto = Maquina.objects.get(id=id)
     opiniones = Opinion.objects.filter(maquina__id=id)
-    sugerencias = Maquina.objects.filter(tipo_maquina__icontains=producto.tipo_maquina).exclude(id=id).order_by('?')[:3]
+    sugerencias = producto.sugerencias.all()
 
     cesta = []
     favoritos = []
