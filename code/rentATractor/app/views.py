@@ -113,7 +113,7 @@ def register(request):
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
         if register_form.is_valid() and register_form.has_changed():
             try:
-                cliente = Cliente.objects.get(dni=register_form.cleaned_data['dni'])
+                cliente = Cliente.objects.get(correo=register_form.cleaned_data['email'])
             except ObjectDoesNotExist:
                 cliente = Cliente(nombre=register_form.cleaned_data['nombre'],
                                   apellidos=register_form.cleaned_data['apellidos'],
@@ -124,7 +124,7 @@ def register(request):
 
             user = User.objects.create_user(register_form.cleaned_data['usuario'], register_form.cleaned_data['email'],
                                             register_form.cleaned_data['password'])
-            cliente = Cliente.objects.get(dni=cliente.dni)
+            cliente = Cliente.objects.get(email=cliente.email)
             cliente_registrado = ClienteRegistrado(user=user, cliente=cliente,
                                                    direccion=register_form.cleaned_data['direccion'])
             cliente_registrado.save()
@@ -168,7 +168,6 @@ def catalogo(request, categoria):
                         Maquina.objects.filter(fabricante__icontains=search)).order_by('-nombre')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-nombre')
-                print(productos)
             elif orden == 'price asc':
                 if search:
                     productos = Maquina.objects.filter(nombre__icontains=search).__or__(
@@ -176,7 +175,6 @@ def catalogo(request, categoria):
                         Maquina.objects.filter(fabricante__icontains=search)).order_by('precio')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('precio')
-                print(productos)
             elif orden == 'price desc':
                 if search:
                     productos = Maquina.objects.filter(nombre__icontains=search).__or__(
@@ -184,7 +182,6 @@ def catalogo(request, categoria):
                         Maquina.objects.filter(fabricante__icontains=search)).order_by('-precio')
                 else:
                     productos = Maquina.objects.filter(tipo_maquina__icontains=tipoMaquina).order_by('-precio')
-                print(productos)
             elif orden == 'ordenar':
                 if search:
                     productos = Maquina.objects.filter(nombre__icontains=search).__or__(
@@ -427,7 +424,7 @@ def domicilioPago(request):
                                                                                           'tienda'] == '1' else 'Dirección de la tienda',
                                 direccion_facturacion=step1_form.cleaned_data['direccion_facturacion']
                                 if step1_form.cleaned_data['direccion_facturacion'] else step1_form.cleaned_data[
-                                    'address'])
+                                    'address'], estado_pedido='No pagado')
                 pedido.save()
                 cesta = EnCesta.objects.filter(cliente__id=cliente.id)
                 for producto in cesta:
@@ -520,7 +517,7 @@ def pago(request, id):
             reembolso = step2_form.cleaned_data['reembolso']
             match reembolso:
                 case '1':
-                    pedido.estado_pedido = EstadoPedido.comprado
+                    pedido.estado_pedido = 'Comprado'
                     pedido.pago_contrareembolso = True
                     pedido.save()
                     for encesta in cesta:
@@ -638,7 +635,6 @@ def confirmacion(request, id):
             HTML(string=html_template, base_url=request.build_absolute_uri()).write_pdf(
                 target="app/factura/factura" + str(pedido.id) + ".pdf")
             filepath = os.path.join(settings.BASE_DIR, 'app/factura/factura' + str(pedido.id) + '.pdf')
-            print(filepath)
             return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
 
         formulario = SearchForm(request.POST)
@@ -960,7 +956,6 @@ def reclamacion(request, pedido):
         if form.is_valid():
             reclamacion = Reclamacion()
             idPedido = pedido
-            print(pedido)
             reclamacion.pedido = Pedido.objects.get(id=idPedido)
             idMaquina = form.cleaned_data['machine']
             if not Reclamacion.objects.filter(pedido=Pedido.objects.get(id=idPedido),
@@ -1003,7 +998,6 @@ def opinion(request, pedido):
         if form.is_valid():
             opinion = Opinion()
             idPedido = pedido
-            print(pedido)
             opinion.pedido = Pedido.objects.get(id=idPedido)
             idMaquina = form.cleaned_data['machine']
             if not Opinion.objects.filter(pedido=Pedido.objects.get(id=idPedido),
