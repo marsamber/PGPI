@@ -82,7 +82,9 @@ class Step1Form(forms.Form):
     surname = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Apellidos"}), label="Apellidos", required=True)
     address = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección", required=True)
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección de envío", required=True)
+    direccion_facturacion = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección de facturación", required=False)
     dni = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="DNI", required=True)
     fecha_nacimiento = forms.DateField(
