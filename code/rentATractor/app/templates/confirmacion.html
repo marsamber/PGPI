@@ -133,8 +133,10 @@
       <form action="" method="POST" >
         {% csrf_token %}
           {{form.as_p}}
+          {% if pedido.estado_pedido != 'Recogido' and not pedido.pago_contrareembolso %}
         <button type="submit" formtarget="_blank" name="descargar_factura" class="btn btn-dark ">Descargar factura PDF</button>
-      
+            {% endif %}
+
       <!-- <a href="" name="descargar_factura" class="text-black"> Descargar factura PDF</a> -->
         </form>
     </div>

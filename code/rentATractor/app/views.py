@@ -69,6 +69,16 @@ def login(request):
         if formulario.is_valid() and formulario.has_changed():
             request.session['search'] = formulario.cleaned_data['search']
             return redirect('/catalogo/Resultados de: ' + request.session['search'])
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            user_name = request.POST['user']
+            password = request.POST['password']
+            user = authenticate(request, username=user_name, password=password)
+            if user is not None:
+                log(request, user)
+                return redirect('/')
+            else:
+                login_form._errors['user'] = login_form.add_error('user', '')
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
         cesta = EnCesta.objects.filter(cliente__id=cliente.id)
@@ -79,27 +89,8 @@ def login(request):
 
 
 def logout(request):
-    # if request.method == 'POST':
     django_logout(request)
     return redirect('/')
-
-
-def autenticar(request):
-    formulario = SearchForm(initial={'search': None})
-    if request.method == 'POST':
-        if formulario.is_valid() and formulario.has_changed():
-            request.session['search'] = formulario.cleaned_data['search']
-            return redirect('/catalogo/Resultados de: ' + request.session['search'])
-        user_name = request.POST['user']
-        password = request.POST['password']
-        user = authenticate(request, username=user_name, password=password)
-        if user is not None:
-            log(request, user)
-            return redirect('/')
-    cesta = verCestaModal(request)
-    return render(request, "login_error.html", {'cesta': cesta, 'formulario': formulario,
-                                                'STATIC_URL': settings.STATIC_URL})
-
 
 def register(request):
     formulario = SearchForm(initial={'search': None})
@@ -529,8 +520,9 @@ def payment_checkout(request, id, envio):
 
 def confirmacion(request, id):
     pedido = Pedido.objects.get(id=id)
-    pedido.estado_pedido = 'Comprado'
-    pedido.save()
+    if pedido.estado_pedido == 'No pagado':
+        pedido.estado_pedido = 'Comprado'
+        pedido.save()
     cesta = EnCesta.objects.filter(cliente=pedido.cliente)
     for producto in cesta:
         producto.delete()
@@ -884,7 +876,10 @@ def seguimientoPedidos(request):
         if form.is_valid() and form.has_changed():
             idPedido = form.cleaned_data['idPedido']
             if Pedido.objects.filter(id=idPedido).exists():
-                return redirect('/confirmacion/' + str(idPedido))
+                if  Pedido.objects.get(pk=idPedido).estado_pedido=='No pagado':
+                    form._errors['idPedido'] = form.add_error('idPedido', '')
+                else:
+                    return redirect('/confirmacion/' + str(idPedido))
             else:
                 form._errors['idPedido'] = form.add_error('idPedido', '')
     try:

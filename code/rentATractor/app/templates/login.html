@@ -1,28 +1,33 @@
 {% extends 'master.html' %} {% block contenido %}
 
-<div class="d-flex flex-row">
-    <div class="col-md-6 offset-md-3">
-        <div class="flex-fill me-md-3 pt-3 px-3 pt-md-5 px-md-5 ">
-            <div class="my-3 py-3 text-center overflow-hidden">
-                <h4 class="fs-3">Inicia sesión</h4>
-                <p class="lead">Inicia sesión para acceder a todos tus datos</p>
-            </div>
-            <form method="post" action="/autenticar/">
-                {% csrf_token %}
-                {% for field in login_form %}
-                    <div class="form-floating mb-3">
-                        {{ field }}
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    <div class="d-flex flex-row">
+        <div class="col-md-6 offset-md-3">
+            <div class="flex-fill me-md-3 pt-3 px-3 pt-md-5 px-md-5 ">
+                <div class="my-3 py-3 text-center overflow-hidden">
+                    <h4 class="fs-3">Inicia sesión</h4>
+                    <p class="lead">Inicia sesión para acceder a todos tus datos</p>
+                </div>
+                {% if login_form.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        Usuario o contraseña incorrectos.
+                    </p>
+                {% endif %}
+                <form method="post" action="/login">
+                    {% csrf_token %}
+                    {% for field in login_form %}
+                        <div class="form-floating mb-3">
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-center my-3 py-3 text-center overflow-hidden">
+                        <p>¿No tienes cuenta? </p><a href="/register" class="text-warning"> Regístrate</a>
                     </div>
-                {% endfor %}
-            <div class="d-flex justify-content-center my-3 py-3 text-center overflow-hidden">
-                <p>¿No tienes cuenta? </p><a href="/register" class="text-warning"> Regístrate</a>
+                    <div class="d-flex justify-content-center m-3">
+                        <button type="submit" class="btn btn-warning">Iniciar sesión</button>
+                    </div>
+                </form>
             </div>
-            <div class="d-flex justify-content-center m-3">
-                <button type="submit" class="btn btn-warning">Iniciar sesión</button>
-            </div>
-            </form>
         </div>
     </div>
-</div>
 {% endblock %}
