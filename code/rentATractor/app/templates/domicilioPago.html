@@ -2,18 +2,62 @@
 {% load custom_template_tags %}
 
 <div class="text-center">
-  <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
-{#  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>#}
-  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
+  <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black">Métodos de envío</a></span>
+  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Métodos de pago</a></span>
 </div>
 <form action="/domicilioPago/" method="post">
 <div class="row mt-5">
+  <strong style="font-size: xx-large">Datos personales</strong>
   <div class="col-md-8">
-    <div class="row">
-      
       {% csrf_token %}
-      {{step1_form }}
-    </div>
+      {% for field in step1_form %}
+        {% if field.name == 'tienda' %} 
+        <strong style="font-size: xx-large">{{ field.label }}</strong>
+          <div class="form-check">
+            {{ field }}
+          </div>
+        {% elif field.name == 'fecha_nacimiento' %}
+        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+          <div class="form-floating mb-3">
+              {{ field }}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          </div>
+          <div class="input-group-append mb-3" data-target="#datetimepicker1" data-toggle="datetimepicker">
+              <div class="input-group-text h-100"><i class="bi bi-calendar"></i></div>
+          </div>
+      </div>
+        {% else %}
+        <div class="form-floating mb-3">
+          {{ field }}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        {% endif %}
+      {% endfor %}
+      <hr>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          id="flexCheckDefault"
+          required
+        />
+        <label class="form-check-label" for="flexCheckDefault">
+          Acepto las condiciones de uso, política de privacidad y aviso legal
+        </label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          id="flexCheckChecked"
+          required
+        />
+        <label class="form-check-label" for="flexCheckChecked">
+          Consiento el tratamiento de datos personales
+        </label>
+      </div>
   </div>
 
   <div class="col-md-4">
@@ -36,26 +80,10 @@
                   unidades
                 {% endif %}</p>
           {% endfor %}
-          <div class="form-check">
-              {{ step1_form.tienda }}
-              <label class="form-check-label">{{ step1_form.tienda.label }}</label>
-{#            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>#}
-{#            <label class="form-check-label" for="flexRadioDefault1">#}
-{#              Recoger en tienda <br/>#}
-{#              <span class="text-muted" style="font-size: smaller;">Gastos de envío gratuitos</span>#}
-{#            </label>#}
-          </div>
-{#          <div class="form-check">#}
-{#            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">#}
-{#            <label class="form-check-label" for="flexRadioDefault2">#}
-{#              Envío a domicilio (50 € gastos de envío)<br/>#}
-{#              <span class="text-muted" style="font-size: smaller;">Envío GRATIS a España por compra superior a 499€</span>#}
-{#            </label>#}
-{#          </div>#}
           <hr/>
-          <strong class="card-text d-flex justify-content-between"><span>Total (sin gastos de envío)</span><span class="w-25 position-absolute end-0">{{precioTotal}} €</span></strong>
+          <strong class="card-text d-flex justify-content-between"><span>Subtotal (sin gastos de envío)</span><span class="w-25 position-absolute end-0">{{precioTotal}} €</span></strong>
       </div>
-  </div>
+    </div>
   </div>
 </div>
 <div class="row mt-5 d-flex justify-content-between">
@@ -63,4 +91,16 @@
   <input class="btn btn-warning w-25" type="submit" value="Continuar">
 </div>
 </form>
+
+<script> $(function () {
+  $("#datetimepicker1").datetimepicker({
+      format: "DD/MM/YYYY",
+      language: "es",
+      autoclose: true,
+      todayHighlight: true,
+      value: new Date(),
+      minDate: new Date(1900, 0, 1),
+      maxDate: Date.now(),
+  });
+});</script>
 {% endblock %}

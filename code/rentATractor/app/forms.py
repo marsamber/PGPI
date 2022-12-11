@@ -52,7 +52,7 @@ class MiCuentaForm(forms.Form):
 
 
 class ContactForm(forms.Form):
-    email = forms.EmailField(widget=forms.TextInput(
+    email = forms.EmailField(widget=forms.EmailInput(
         attrs={"class": "form-control me-2", "placeholder": "Email"}), label="Correo electrónico", required=True)
     subject = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2", "placeholder": "Asunto del mensaje"}), label="Asunto", required=True)
@@ -77,25 +77,25 @@ class OpinionForm(forms.Form):
 
 
 class Step1Form(forms.Form):
-    template_name = 'domicilioPago_snippet.html'
     name = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Nombre"}), label="Nombre", required=True)
     surname = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2 ", "placeholder": "Apellidos"}), label="Apellidos", required=True)
     address = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección", required=True)
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección de envío", required=True)
+    direccion_facturacion = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "form-control me-2", "placeholder": "Nombre de la Vía"}), label="Dirección de facturación", required=False)
     dni = forms.CharField(widget=forms.TextInput(
         attrs={"class": "form-control me-2", "placeholder": "XXXXXXXXX"}), label="DNI", required=True)
     fecha_nacimiento = forms.DateField(
         widget=forms.DateInput(attrs={'class': "form-control me-2", 'placeholder': 'dd/mm/yyyy'}),
         label='Fecha de nacimiento', required=True)
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': "form-control me-2"}), label='Correo eléctronico')
-    tienda = forms.BooleanField(widget=forms.CheckboxInput(
-        attrs={'class': "form-check-input", 'type': "radio", 'name': "flexRadioDefault", 'type': 'checkbox'}),
-        label='Recogida en tienda', required=False)
+    CHOICES=[(1,'Envío a domicilio'),(2, 'Recogida en tienda')]
+    tienda = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label='Método de envío')	
 
 class Step2Form(forms.Form):
-    CHOICES=[(1,'Pago a contrarreembolso'),(2, 'Pago con tarjeta de débito o crédito')]
+    CHOICES=[(1,'Pago a contrareembolso'),(2, 'Pago con tarjeta de débito o crédito')]
     reembolso = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label='Método de pago')
 
 class SeguimientoPedidoForm(forms.Form):

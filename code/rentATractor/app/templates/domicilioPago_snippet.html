@@ -1,8 +1,0 @@
-{% for field in form %}
-    <div class="row">
-    {% if field.label != 'Recogida en tienda' %}
-        <label>{{ field.label_tag }}</label>
-        {{ field }}
-    {% endif %}
-    </div>
-{% endfor %}
