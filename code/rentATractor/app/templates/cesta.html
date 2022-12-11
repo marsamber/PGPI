@@ -18,15 +18,19 @@
                     {{producto.maquina.precio|subtract:producto.maquina.descuento}}
                     {% else %}
                     {{producto.maquina.precio}}
-                    {% endif %} €</strong>{% if producto in favoritos %}
-                    <a role="button" href="/favoritos/{{ producto.id }}">
-                        <i class="bi bi-bookmark-fill"></i>
-                    </a>
-                    {% else %}
-                    <a role="button" href="/favoritos/{{ producto.id }}">
-                        <i class="bi bi-bookmark"></i>
-                    </a>
-                    {% endif %}</span> <br/>
+                    {% endif %} €</strong>
+                    {% if not noCliente %}
+                      {% if producto in favoritos %}
+                      <a role="button" href="/favoritos/{{ producto.id }}">
+                          <i class="bi bi-bookmark-fill"></i>
+                      </a>
+                      {% else %}
+                      <a role="button" href="/favoritos/{{ producto.id }}">
+                          <i class="bi bi-bookmark"></i>
+                      </a>
+                      {% endif %}
+                    {% endif %}
+                  </span> <br/>
                   <div class="input-group flex-nowrap">
                     <input type="number" class="form-control" value="{{producto.cantidad}}" min="1" aria-label="Unidades" aria-describedby="addon-wrapping" onchange="document.location.href = '/cesta/update/{{producto.maquina.id}}/' + this.value">
                     <input type="hidden" name="next" value="{{ request.path }}">

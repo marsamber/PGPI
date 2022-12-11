@@ -44,19 +44,21 @@
                             </span>
                         </span>
                         <input type="hidden" name="next" value="{{ request.path }}">
-                        {% if producto in favoritos %}
-                        <a role="button" href="/favoritos/{{ producto.id }}">
-                            <i class="bi bi-bookmark-fill"></i>
-                        </a>
-                        {% else %}
-                        <a role="button" href="/favoritos/{{ producto.id }}">
-                            <i class="bi bi-bookmark"></i>
-                        </a>
+                        {% if not noCliente %}
+                            {% if producto in favoritos %}
+                            <a role="button" href="/favoritos/{{ producto.id }}">
+                                <i class="bi bi-bookmark-fill"></i>
+                            </a>
+                            {% else %}
+                            <a role="button" href="/favoritos/{{ producto.id }}">
+                                <i class="bi bi-bookmark"></i>
+                            </a>
+                            {% endif %}
                         {% endif %}
                     </h5>
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <a href="/cesta/{{producto.id}}/">
-                        <button class="btn btn-light w-100" onclick="alert('Producto añadido al carrito')">Añadir a la cesta</button>
+                        <button class="btn btn-light w-100">Añadir a la cesta</button>
                     </a>
                 </div>
               </div>
