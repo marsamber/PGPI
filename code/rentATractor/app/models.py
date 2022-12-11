@@ -44,6 +44,7 @@ class Maquina(models.Model):
     tipo_maquina = models.CharField(choices=TipoMaquina.choices(), default=TipoMaquina.varios, max_length=256)
     descuento = models.FloatField(default=0.0)
     sugerido = models.BooleanField(default=False)
+    sugerencias = models.ManyToManyField('Maquina', null=True)
 
 
 class Cliente(models.Model):
