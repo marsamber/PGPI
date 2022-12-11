@@ -239,7 +239,8 @@ def producto(request, id):
         cliente = None
         cesta = verCestaModal(request)
     return render(request, 'producto.html',
-                  {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'favoritos': favoritos, 'cesta': cesta,
+                  {'producto': producto, 'sugerencias': sugerencias, 'opiniones': opiniones, 'favoritos': favoritos,
+                   'cesta': cesta,
                    'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
 
@@ -425,7 +426,8 @@ def domicilioPago(request):
                                 direccion_envio=step1_form.cleaned_data['address'] if step1_form.cleaned_data[
                                                                                           'tienda'] == '1' else 'Dirección de la tienda',
                                 direccion_facturacion=step1_form.cleaned_data['direccion_facturacion']
-                if step1_form.cleaned_data['direccion_facturacion'] else step1_form.cleaned_data['address'])
+                                if step1_form.cleaned_data['direccion_facturacion'] else step1_form.cleaned_data[
+                                    'address'])
                 pedido.save()
                 cesta = EnCesta.objects.filter(cliente__id=cliente.id)
                 for producto in cesta:
@@ -433,11 +435,12 @@ def domicilioPago(request):
                     Contiene(pedido=pedido, maquina=producto.maquina, cantidad=producto.cantidad).save()
             return redirect(f'/pago/{pedido.id}')
     for producto in cesta:
-        precioTotal+= producto.maquina.precio*(1-producto.maquina.descuento)*producto.cantidad
+        precioTotal += producto.maquina.precio * (1 - producto.maquina.descuento) * producto.cantidad
     return render(request, 'domicilioPago.html',
                   {'precioTotal': precioTotal, 'cesta': cesta, 'formulario': formulario,
                    'STATIC_URL': settings.STATIC_URL, 'cliente': cliente,
                    'step1_form': step1_form, 'noCliente': noCliente})
+
 
 def remove_pedido(request, id):
     try:
@@ -445,6 +448,7 @@ def remove_pedido(request, id):
     except:
         pass
     return redirect('/domicilioPago')
+
 
 def datosPago(request):
     precioTotal = 0
@@ -468,7 +472,7 @@ def datosPago(request):
             precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
         precioTotalEnvio = precioTotal + 50 if (
-                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
+                precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
 
         pedido = Pedido.objects.filter(cliente__id=1).last()
     except ObjectDoesNotExist:
@@ -479,13 +483,14 @@ def datosPago(request):
             precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
 
         precioTotalEnvio = precioTotal + 50 if (
-                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
+                precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
 
     return render(request, 'datosPago.html',
                   {'precioTotal': precioTotal, 'precioTotalEnvio': precioTotalEnvio, 'pedido': pedido,
                    'cesta': cesta,
                    'formulario': formulario, 'step1_form': step1_form, 'STATIC_URL': settings.STATIC_URL,
                    'cliente': cliente})
+
 
 def pago(request, id):
     step2_form = Step2Form()
@@ -498,6 +503,11 @@ def pago(request, id):
         cesta = EnCesta.objects.filter(cliente__id=Pedido.objects.get(pk=id).cliente.id)
     except:
         cesta = verCestaModal(request)
+    for producto in cesta:
+        precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
+
+    precioTotalEnvio = precioTotal + 50 if (
+            precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
     if request.method == 'POST':
         formulario = SearchForm(request.POST)
         if formulario.is_valid() and formulario.has_changed():
@@ -515,33 +525,23 @@ def pago(request, id):
                         encesta.delete()
                     return redirect(f'/confirmacion/{pedido.id}')
                 case '2':
-                    return payment_checkout(request, id)
+                    return payment_checkout(request, id, precioTotal >= 500)
 
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
     except ObjectDoesNotExist:
         cliente = None
-
-        for producto in cesta:
-            precioTotal += (producto.maquina.precio - producto.maquina.descuento) * producto.cantidad
-
-        precioTotalEnvio = precioTotal + 50 if (
-                    precioTotal < 499 and not pedido.recogida_en_tienda) else precioTotal
 
     return render(request, 'pago.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente,
                    'pedido': pedido, 'step2_form': step2_form, 'precioTotal': precioTotal,
                    'precioTotalEnvio': precioTotalEnvio})
 
-def payment_checkout(request, id):
+
+def payment_checkout(request, id, envio):
     stripe.api_key = 'sk_test_51M7jbDAogMfbRmsAelkebvd3Wsk0oeabaTqNZ959kYwIwazCJyYjOfE2N90zlDtieXZlxB41iNnEMEei0pnCw9YM000Tl9hu0p'
     contiene = Contiene.objects.filter(pedido__id=id)
-
+    pedido = Pedido.objects.get(pk=id)
     line_data = []
     for producto in contiene:
         line_data.append({
@@ -554,6 +554,17 @@ def payment_checkout(request, id):
             },
             'quantity': producto.cantidad,
         })
+    if not envio and not pedido.recogida_en_tienda:
+        line_data.append({
+            'price_data': {
+                'currency': 'eur',
+                'product_data': {
+                    'name': 'Gastos de envío',
+                },
+                'unit_amount': 5000,
+            },
+            'quantity': producto.cantidad,
+        })
     session = stripe.checkout.Session.create(
         line_items=line_data, mode='payment',
         success_url=f'http://localhost:8000/confirmacion/{id}',
@@ -561,6 +572,7 @@ def payment_checkout(request, id):
     )
 
     return redirect(session.url)
+
 
 def confirmacion(request, id):
     pedido = Pedido.objects.get(id=id)
@@ -650,6 +662,7 @@ def confirmacion(request, id):
                                                  'formulario': formulario, 'STATIC_URL': settings.STATIC_URL,
                                                  'cliente': cliente, 'enviado': enviado})
 
+
 def factura(request, id):
     pedido = Pedido.objects.get(id=id)
     contiene = Contiene.objects.filter(pedido__id=id)
@@ -687,6 +700,7 @@ def factura(request, id):
                                             'STATIC_URL': settings.STATIC_URL,
                                             'cliente': cliente, 'enviado': enviado})
 
+
 def cancelar(request):
     cesta = []
     try:
@@ -696,6 +710,7 @@ def cancelar(request):
         cliente = None
         cesta = verCestaModal(request)
     return render(request, 'cancelar.html', {'cesta': cesta, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 def miCuenta(request):
     try:
@@ -732,6 +747,7 @@ def miCuenta(request):
     except ObjectDoesNotExist:
         return redirect('/login')
 
+
 def favoritos(request):
     try:
         cliente = ClienteRegistrado.objects.get(user=request.user.id).cliente
@@ -752,6 +768,7 @@ def favoritos(request):
     except ObjectDoesNotExist:
         return redirect('/login')
 
+
 def addFavorito(request, id):
     try:
         clienteRegistrado = ClienteRegistrado.objects.get(user=request.user.id)
@@ -765,6 +782,7 @@ def addFavorito(request, id):
     except ObjectDoesNotExist:
         pass
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def misPedidos(request):
     try:
@@ -790,6 +808,7 @@ def misPedidos(request):
         cliente = None
         return redirect('/login')
 
+
 def sobreNosotros(request):
     cesta = []
 
@@ -808,6 +827,7 @@ def sobreNosotros(request):
         cesta = verCestaModal(request)
     return render(request, 'sobreNosotros.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 def contacto(request):
     cesta = []
@@ -851,6 +871,7 @@ def contacto(request):
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
                    'cliente': cliente, 'submitted': submitted})
 
+
 def atencionCliente(request):
     cesta = []
 
@@ -869,6 +890,7 @@ def atencionCliente(request):
         cesta = verCestaModal(request)
     return render(request, 'atencionCliente.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 def seguimientoPedidos(request):
     cesta = []
@@ -901,6 +923,7 @@ def seguimientoPedidos(request):
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
                    'cliente': cliente})
 
+
 def politicaDevolucion(request):
     cesta = []
 
@@ -919,6 +942,7 @@ def politicaDevolucion(request):
         cesta = verCestaModal(request)
     return render(request, 'politicaDevolucion.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 def reclamacion(request, pedido):
     cesta = []
@@ -966,6 +990,7 @@ def reclamacion(request, pedido):
                   {'cesta': cesta, 'formulario': formulario, 'form': form, 'STATIC_URL': settings.STATIC_URL,
                    'submitted': submitted, 'cliente': cliente})
 
+
 def opinion(request, pedido):
     form = OpinionForm()
     formulario = SearchForm(initial={'search': None})
@@ -1009,6 +1034,7 @@ def opinion(request, pedido):
                    'submitted': submitted,
                    'cliente': cliente})
 
+
 def terminosCondicionesUso(request):
     cesta = []
 
@@ -1027,6 +1053,7 @@ def terminosCondicionesUso(request):
         cesta = verCestaModal(request)
     return render(request, 'terminosCondicionesUso.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 def politicaPrivacidad(request):
     cesta = []
@@ -1047,6 +1074,7 @@ def politicaPrivacidad(request):
     return render(request, 'politicaPrivacidad.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
+
 def condicionesAlquiler(request):
     cesta = []
 
@@ -1064,6 +1092,7 @@ def condicionesAlquiler(request):
         cliente = None
     return render(request, 'condicionesAlquiler.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
+
 
 def politicaEnvio(request):
     cesta = []
@@ -1083,6 +1112,7 @@ def politicaEnvio(request):
     return render(request, 'politicaEnvio.html',
                   {'cesta': cesta, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL, 'cliente': cliente})
 
+
 def error403(request):
     formulario = SearchForm(initial={'search': None})
 
@@ -1099,6 +1129,7 @@ def error403(request):
         cesta = verCestaModal(request)
     return render(request, '403_csrf.html',
                   {'STATIC_URL': settings.STATIC_URL, 'formulario': formulario, 'cliente': cliente})
+
 
 def error404(request):
     formulario = SearchForm(initial={'search': None})
@@ -1117,6 +1148,7 @@ def error404(request):
     return render(request, '404.html',
                   {'STATIC_URL': settings.STATIC_URL, 'formulario': formulario, 'cliente': cliente})
 
+
 def error500(request):
     formulario = SearchForm(initial={'search': None})
 
@@ -1133,6 +1165,7 @@ def error500(request):
         cesta = verCestaModal(request)
     return render(request, '500.html',
                   {'STATIC_URL': settings.STATIC_URL, 'formulario': formulario, 'cliente': cliente})
+
 
 def categoriaToTipoMaquina(categoria):
     match categoria:
