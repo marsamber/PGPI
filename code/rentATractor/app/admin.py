@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Maquina, Cliente, Pedido, Tarjeta, ClienteRegistrado, Opinion, Reclamacion, Contiene, EnCesta
+from app.models import Maquina, Cliente, Pedido, Tarjeta, ClienteRegistrado, Opinion, Reclamacion, Contiene, EnCesta, Factura
 from django.utils.html import mark_safe
 
 class MaquinaAdmin(admin.ModelAdmin):
@@ -152,3 +152,4 @@ admin.site.register(Opinion, OpinionAdmin)
 admin.site.register(Reclamacion, ReclamacionAdmin)
 admin.site.register(Contiene, ContieneAdmin)
 admin.site.register(EnCesta, EnCestaAdmin)
+admin.site.register(Factura)

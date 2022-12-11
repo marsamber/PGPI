@@ -1,7 +1,7 @@
 {% extends 'master.html' %} {% block contenido %}
 
 <div class="d-flex flex-row">
-    <div class="col">
+    <div class="col-md-6 offset-md-3">
         <div class="flex-fill me-md-3 pt-3 px-3 pt-md-5 px-md-5 ">
             <div class="my-3 py-3 text-center overflow-hidden">
                 <h4 class="fs-3">Inicia sesión</h4>
@@ -9,29 +9,17 @@
             </div>
             <form method="post" action="/autenticar/">
                 {% csrf_token %}
-                {{ login_form }}
+                {% for field in login_form %}
+                    <div class="form-floating mb-3">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    </div>
+                {% endfor %}
             <div class="d-flex justify-content-center my-3 py-3 text-center overflow-hidden">
                 <p>¿No tienes cuenta? </p><a href="/register" class="text-warning"> Regístrate</a>
             </div>
             <div class="d-flex justify-content-center m-3">
-                <button type="submit" class="btn btn-warning">Iniciar sesión</button> <!-- type="submit" cuando se implemente form -->
-            </div>
-            </form>
-        </div>
-    </div>
-    <div class="col">
-        <div class="flex-fill me-md-3 pt-3 px-3 pt-md-5 px-md-5 ">
-            <div class="my-3 py-3 text-center overflow-hidden">
-                <h4 class="fs-3">Nuevo Cliente</h4>
-                <p class="lead">Compra sin registrarte</p>
-            </div>
-            <form>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Correo electronico</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-outline-dark" onclick="location.href='/domicilioPago'">Continuar</button> <!-- type="submit" cuando se implemente form -->
+                <button type="submit" class="btn btn-warning">Iniciar sesión</button>
             </div>
             </form>
         </div>

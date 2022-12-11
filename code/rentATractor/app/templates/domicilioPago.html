@@ -3,57 +3,19 @@
 
 <div class="text-center">
   <span class="badge text-bg-warning fs-5"> <a class = "text-decoration-none text-black">Envío a domicilio</a></span>
-  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>
+{#  <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Datos personales</a></span>#}
   <span class="badge text-bg-light fs-5"><a class = "text-decoration-none text-black">Pago</a></span>
 </div>
-<form action="/domicilioPago/" method="POST"></form>
+<form action="/domicilioPago/" method="post">
 <div class="row mt-5">
   <div class="col-md-8">
     <div class="row">
       
       {% csrf_token %}
-      {{form }}
-      <!-- {% for field in form %}
-
-      <div class="col">
-        {{ form.field1 }}
-      </div>
-      <div class="col">
-        {{ form.field2 }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        {{ form.field3 }}
-      </div>
-      <div class="col">
-        {{ form.field4 }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        {{ form.field5 }}
-      </div>
-      <div class="col">
-        {{ form.field6 }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
-        {{ form.field7 }}
-      </div>
-      <div class="col-md-4">
-        {{ form.field8 }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        {{ form.field9 }}
-      </div>
-      {% endfor %} -->
+      {{step1_form }}
     </div>
   </div>
-  
+
   <div class="col-md-4">
     <div class="card border-0 bg-light">
       <div class="card-body">
@@ -75,19 +37,21 @@
                 {% endif %}</p>
           {% endfor %}
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
-            <label class="form-check-label" for="flexRadioDefault1">
-              Recoger en tienda <br/>
-              <span class="text-muted" style="font-size: smaller;">Gastos de envío gratuitos</span>
-            </label>
+              {{ step1_form.tienda }}
+              <label class="form-check-label">{{ step1_form.tienda.label }}</label>
+{#            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>#}
+{#            <label class="form-check-label" for="flexRadioDefault1">#}
+{#              Recoger en tienda <br/>#}
+{#              <span class="text-muted" style="font-size: smaller;">Gastos de envío gratuitos</span>#}
+{#            </label>#}
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-            <label class="form-check-label" for="flexRadioDefault2">
-              Envío a domicilio (50 € gastos de envío)<br/>
-              <span class="text-muted" style="font-size: smaller;">Envío GRATIS a España por compra superior a 499€</span>
-            </label>
-          </div>
+{#          <div class="form-check">#}
+{#            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">#}
+{#            <label class="form-check-label" for="flexRadioDefault2">#}
+{#              Envío a domicilio (50 € gastos de envío)<br/>#}
+{#              <span class="text-muted" style="font-size: smaller;">Envío GRATIS a España por compra superior a 499€</span>#}
+{#            </label>#}
+{#          </div>#}
           <hr/>
           <strong class="card-text d-flex justify-content-between"><span>Total (sin gastos de envío)</span><span class="w-25 position-absolute end-0">{{precioTotal}} €</span></strong>
       </div>
@@ -96,7 +60,7 @@
 </div>
 <div class="row mt-5 d-flex justify-content-between">
   <button class="btn btn-outline-secondary w-25" onclick="location.href='/cesta'">Volver</button>
-  <button class="btn btn-warning w-25" onclick="location.href='/datosPago'">Continuar</button>
+  <input class="btn btn-warning w-25" type="submit" value="Continuar">
 </div>
 </form>
 {% endblock %}
