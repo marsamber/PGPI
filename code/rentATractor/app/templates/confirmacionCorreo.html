@@ -13,6 +13,23 @@
     <p>Le confirmamos que se ha tramitado su compra.</p>
     <p>El número de referencia de su pedido es <strong>{{ pedido.id }}</strong></p>
   </div>
+  <p>Detalles de su pedido:</p>
+  <ul>
+    {% for producto in pedido.maquina.all %}
+    <li> - Maquina "{{producto.nombre}}"" - {{producto.precio}}€</li>
+    <li>{{producto.precio}}€</li>
+
+    {% endfor %}
+  </ul>
+  <div class="row">
+    <p>PRECIO TOTAL: {{precioTotalEnvio}}</p>
+  </div>
+  <div class="row">
+    <p>ENVÍO: Si ha escogido método de envío a domicilio se enviará a "{{pedido.direccion_envio}}"</p>
+  </div>
+  <div class="row">
+    <p>PAGO: Si ha escogido método de pago a contrarreembolso deberá abonar la cantidad total de la compra a la persona encargada de entregar su paquete.</p>
+  </div>
   <div class="row">
     <p>Si quiere ver el estado de su pedido entre en nuestra página web, en la sección de <strong>SEGUIMIENTO DE PEDIDOS</strong> e introduzca su número de refencia de pedido.</p>
   </div>
