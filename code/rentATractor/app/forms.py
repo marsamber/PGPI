@@ -60,17 +60,11 @@ class ContactForm(forms.Form):
 
 
 class ComplaintForm(forms.Form):
-    name = forms.CharField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Nombre del cliente"}), label="Nombre", required=True)
-    email = forms.EmailField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "Email"}), label="Correo electrónico", required=True)
-    order = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de pedido", required=True)
     machine = forms.IntegerField(widget=forms.TextInput(
-        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de máquina", required=True)
-    message = forms.CharField(widget=forms.Textarea(
-        attrs={"class": "form-control me-2", "placeholder": "Descripción del problema"}), label="Mensaje",
+        attrs={"class": "form-control me-2", "placeholder": "XXXX"}), label="Número de referencia del producto",
         required=True)
+    message = forms.CharField(widget=forms.Textarea(
+attrs={"class": "form-control me-2", "placeholder": "Escribe tu reclamación"}), label="Mensaje", required=True)
 
 
 class OpinionForm(forms.Form):
