@@ -1,6 +1,6 @@
 import datetime
 from django.test import TestCase
-from app.models import Cliente, ClienteRegistrado, Contiene, EnCesta, Factura, LineaFactura, Maquina, Opinion, Pedido, Reclamacion, Tarjeta
+from app.models import Cliente, ClienteRegistrado, Contiene, EnCesta, Factura, LineaFactura, Maquina, Opinion, Pedido, Reclamacion
 from django.contrib.auth.models import User
 
 class ModelsTestCase(TestCase):
@@ -120,20 +120,6 @@ class ModelsTestCase(TestCase):
         clienteRegistrado2.gusta.set(Maquina.objects.filter(id=2))
         clienteRegistrado2.save()
 
-        #Crea dos tarjetas de prueba
-        Tarjeta.objects.create(
-            numero='1234567890123456',
-            codigo='123',
-            fecha_validez='2023-01-01',
-            usuario = User.objects.get(id=2)
-        )
-        Tarjeta.objects.create(
-            numero='Numero de prueba',
-            codigo='Codigo de prueba',
-            fecha_validez='2023-01-01',
-            usuario = User.objects.get(id=3)
-        )
-
         #Crea tres pedidos de prueba
         pedido1 = Pedido.objects.create(
             id=1,
@@ -142,7 +128,6 @@ class ModelsTestCase(TestCase):
             direccion_facturacion='Direccion de facturacion de prueba',
             estado_pedido='no_pagado',
             cliente=Cliente.objects.get(id=1),
-            tarjeta=Tarjeta.objects.get(id=1),
             pago_contrareembolso=False,
             recogida_en_tienda=False
         )
@@ -154,7 +139,6 @@ class ModelsTestCase(TestCase):
             direccion_facturacion='Direccion de facturacion de prueba',
             estado_pedido='no_pagado',
             cliente=Cliente.objects.get(id=2),
-            tarjeta=Tarjeta.objects.get(id=2),
             pago_contrareembolso=False,
             recogida_en_tienda=False
         )
@@ -166,7 +150,6 @@ class ModelsTestCase(TestCase):
             direccion_facturacion='Direccion de facturacion de prueba',
             estado_pedido='no_pagado',
             cliente=Cliente.objects.get(id=3),
-            tarjeta=Tarjeta.objects.get(id=2),
             pago_contrareembolso=False,
             recogida_en_tienda=False
         )
@@ -274,8 +257,6 @@ class ModelsTestCase(TestCase):
         Cliente.objects.all().delete()
         # Borra los clientes registrados de prueba
         ClienteRegistrado.objects.all().delete()
-        # Borra las tarjetas de prueba
-        Tarjeta.objects.all().delete()
         # Borra los pedidos de prueba
         Pedido.objects.all().delete()
         # Borra las opiniones de prueba
@@ -484,53 +465,6 @@ class ModelsTestCase(TestCase):
         # Comprueba que el cliente registrado se ha borrado correctamente
         self.assertRaises(ClienteRegistrado.DoesNotExist, ClienteRegistrado.objects.get, cliente__id=2)
 
-    # Tests de la clase Tarjeta
-    # Comprueba que se pueden obtener las tarjetas de la base de datos
-    def test_tarjeta_retrieve(self):
-        # Obtiene una tarjeta de la base de datos
-        tarjeta = Tarjeta.objects.get(usuario__id=2)
-        # Comprueba que la tarjeta se ha obtenido correctamente
-        self.assertEqual(tarjeta.numero, '1234567890123456')
-        self.assertEqual(tarjeta.fecha_validez, datetime.datetime.strptime('2023-01-01', '%Y-%m-%d').date())
-        self.assertEqual(tarjeta.codigo, '123')
-        self.assertEqual(tarjeta.usuario, User.objects.get(id=2))
-
-    # Comprueba que se pueden crear tarjetas
-    def test_tarjeta_create(self):
-        # Crea una tarjeta con los datos de prueba
-        tarjeta = Tarjeta.objects.create(
-            numero = '1234567890123456',
-            fecha_validez = '2023-01-01',
-            codigo = '123',
-            usuario = User.objects.get(id=4)
-        )
-        # Comprueba que la tarjeta se ha creado correctamente
-        self.assertEqual(tarjeta.numero, '1234567890123456')
-        self.assertEqual(tarjeta.fecha_validez, '2023-01-01')
-        self.assertEqual(tarjeta.codigo, '123')
-        self.assertEqual(tarjeta.usuario, User.objects.get(id=4))
-        # Borra la tarjeta de prueba
-        tarjeta.delete()
-
-    # Comprueba que se pueden actualizar tarjetas
-    def test_tarjeta_update(self):
-        # Obtiene una tarjeta de la base de datos
-        tarjeta = Tarjeta.objects.get(usuario__id=2)
-        # Actualiza la tarjeta
-        tarjeta.codigo = '321'
-        tarjeta.save()
-        # Comprueba que la tarjeta se ha actualizado correctamente
-        self.assertEqual(tarjeta.codigo, '321')
-
-    # Comprueba que se pueden borrar tarjetas
-    def test_tarjeta_delete(self):
-        # Obtiene una tarjeta de la base de datos
-        tarjeta = Tarjeta.objects.get(usuario__id=3)
-        # Borra la tarjeta
-        tarjeta.delete()
-        # Comprueba que la tarjeta se ha borrado correctamente
-        self.assertRaises(Tarjeta.DoesNotExist, Tarjeta.objects.get, usuario__id=3)
-
     # Tests de la clase Pedido
     # Comprueba que se pueden obtener los pedidos de la base de datos
     def test_pedido_retrieve(self):
@@ -542,7 +476,6 @@ class ModelsTestCase(TestCase):
         self.assertEqual(pedido.direccion_facturacion, 'Direccion de facturacion de prueba')
         self.assertEqual(pedido.estado_pedido, 'no_pagado')
         self.assertEqual(pedido.cliente, Cliente.objects.get(id=1))
-        self.assertEqual(pedido.tarjeta, Tarjeta.objects.get(id=1))
         self.assertEqual(pedido.pago_contrareembolso, False)
         self.assertEqual(pedido.recogida_en_tienda, False)
 
@@ -556,7 +489,6 @@ class ModelsTestCase(TestCase):
             direccion_facturacion = 'Direccion de prueba',
             estado_pedido = 'no_pagado',
             cliente = Cliente.objects.get(id=1),
-            tarjeta = Tarjeta.objects.get(id=1),
             pago_contrareembolso = False,
             recogida_en_tienda = False
         )
@@ -566,7 +498,6 @@ class ModelsTestCase(TestCase):
         self.assertEqual(pedido.direccion_facturacion, 'Direccion de prueba')
         self.assertEqual(pedido.estado_pedido, 'no_pagado')
         self.assertEqual(pedido.cliente, Cliente.objects.get(id=1))
-        self.assertEqual(pedido.tarjeta, Tarjeta.objects.get(id=1))
         self.assertEqual(pedido.pago_contrareembolso, False)
         self.assertEqual(pedido.recogida_en_tienda, False)
         # Borra el pedido de prueba

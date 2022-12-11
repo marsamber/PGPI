@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Maquina, Cliente, Pedido, Tarjeta, ClienteRegistrado, Opinion, Reclamacion, Contiene, EnCesta, Factura
+from app.models import Maquina, Cliente, Pedido, ClienteRegistrado, Opinion, Reclamacion, Contiene, EnCesta, Factura
 from django.utils.html import mark_safe
 
 class MaquinaAdmin(admin.ModelAdmin):
@@ -37,18 +37,6 @@ class PedidoAdmin(admin.ModelAdmin):
         return mark_safe(to_return)
     get_maquina.short_description = 'maquinas'
     get_maquina.admin_order_field = 'maquinas'
-
-class TarjetaAdmin(admin.ModelAdmin):
-    list_display = ["titular", "numero", "codigo", "fecha_validez", "get_usuario"]
-    list_editable = ["codigo"]
-    search_fields = ["titular", "numero", "codigo", "uuario__username"]
-    search_help_text = 'Búsqueda por "titular", "número" o "código" de la tarjeta. También, puede buscar por el "nombre de usuario".'
-    list_per_page = 10
-
-    def get_usuario(self, obj):
-        return obj.usuario
-    get_usuario.short_description = 'usuario'
-    get_usuario.admin_order_field = 'usuario'
 
 class ClienteRegistradoAdmin(admin.ModelAdmin):
     list_display = ["get_cliente", "get_user", "direccion", "get_gusta"]
@@ -146,7 +134,6 @@ class EnCestaAdmin(admin.ModelAdmin):
 admin.site.register(Maquina, MaquinaAdmin)
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(Pedido, PedidoAdmin)
-admin.site.register(Tarjeta, TarjetaAdmin)
 admin.site.register(ClienteRegistrado, ClienteRegistradoAdmin)
 admin.site.register(Opinion, OpinionAdmin)
 admin.site.register(Reclamacion, ReclamacionAdmin)
